@@ -1,0 +1,95 @@
+C51 COMPILER V8.01   HONGWAI                                                               07/15/2008 15:54:01 PAGE 1   
+
+
+C51 COMPILER V8.01, COMPILATION OF MODULE HONGWAI
+OBJECT MODULE PLACED IN hongwai.OBJ
+COMPILER INVOKED BY: D:\安装程序\keil_801\C51\BIN\C51.EXE hongwai.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /****红外线解码程序（开发板电路）********/
+   2          /****键值送给P1口，只能识别16个键****/
+   3          /****红外发射是采用38K的载频发射的，可知信号周期为1/38ms=0.263ms,即高低电平为0.1325ms****/                                        
+   4          void delay(unsigned char x) ;//x*0.13MS
+   5          sbit  in=P3^2;
+*** ERROR C202 IN LINE 5 OF HONGWAI.C: 'P3': undefined identifier
+   6          unsigned char IRCOM[8];
+   7          hongwai()
+   8          {
+   9   1      
+  10   1       in=1;
+*** ERROR C202 IN LINE 10 OF HONGWAI.C: 'in': undefined identifier
+  11   1       while(1)
+  12   1       {
+  13   2        P1= IRCOM[5];                 /**  0000 0110(0x06) (上) 
+*** ERROR C202 IN LINE 13 OF HONGWAI.C: 'P1': undefined identifier
+  14   2      
+  15   2                           0100 0111(0x47)（左）   0000 0111 (0x07)（中）       0100 0000(0x40)（右）
+  16   2                              
+  17   2                                                                           0100 0100(0x44) （下）**/
+  18   2        }
+  19   1       }
+  20          
+  21          int0() interrupt 0
+  22          {
+  23   1       unsigned char i,j,k,N=0;
+  24   1        EA = 0 ;
+*** ERROR C202 IN LINE 24 OF HONGWAI.C: 'EA': undefined identifier
+  25   1      I1:
+  26   1        for (i=0;i<10;i++)
+  27   1         {
+  28   2          if (in==0) break;
+*** ERROR C202 IN LINE 28 OF HONGWAI.C: 'in': undefined identifier
+  29   2       if (i==9) {EA =1 ;return ;}
+*** ERROR C202 IN LINE 29 OF HONGWAI.C: 'EA': undefined identifier
+  30   2         }
+  31   1        delay(20);
+  32   1          if (in==1) goto I1;  //确认IR信号出现
+*** ERROR C202 IN LINE 32 OF HONGWAI.C: 'in': undefined identifier
+  33   1        while (!in)            //等 IR 变为高电平
+*** ERROR C202 IN LINE 33 OF HONGWAI.C: 'in': undefined identifier
+  34   1          {delay(1) ;}
+  35   1      
+  36   1       for (j=0 ;j<4 ;j++)
+  37   1       { 
+  38   2        for (k=0 ;k<8 ;k++)
+  39   2        {
+  40   3         while (in)            //等 IR 变为低电平
+*** ERROR C202 IN LINE 40 OF HONGWAI.C: 'in': undefined identifier
+  41   3           {delay(1);}
+  42   3          while (!in)          //等 IR 变为高电平
+*** ERROR C202 IN LINE 42 OF HONGWAI.C: 'in': undefined identifier
+  43   3           {delay(1);}
+  44   3           while (in)           //计算IR高电平时长
+*** ERROR C202 IN LINE 44 OF HONGWAI.C: 'in': undefined identifier
+C51 COMPILER V8.01   HONGWAI                                                               07/15/2008 15:54:01 PAGE 2   
+
+  45   3            {
+  46   4          delay(1);
+  47   4          N++ ;           
+  48   4          if (N>=30) {EA=1 ;return ;}
+*** ERROR C202 IN LINE 48 OF HONGWAI.C: 'EA': undefined identifier
+  49   4         }
+  50   3           IRCOM[j]=IRCOM[j]>>1;
+  51   3           if (N>=8) {IRCOM[j] = IRCOM[j] | 0x80 ;}
+  52   3           N=0;
+  53   3        }
+  54   2       }
+  55   1         
+  56   1         if (IRCOM[2]!=~IRCOM[3]) {EA=1 ;return ;}
+*** ERROR C202 IN LINE 56 OF HONGWAI.C: 'EA': undefined identifier
+  57   1         IRCOM[5]=IRCOM[2];
+  58   1         EA = 1 ;
+*** ERROR C202 IN LINE 58 OF HONGWAI.C: 'EA': undefined identifier
+  59   1      }
+  60          
+  61          void delay(unsigned char x)      //x*0.14MS
+  62          {
+  63   1       unsigned char i ;
+  64   1        while(x--)
+  65   1       {
+  66   2        for (i =0;i<13;i++);
+  67   2       }
+  68   1      }
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  14 ERROR(S)

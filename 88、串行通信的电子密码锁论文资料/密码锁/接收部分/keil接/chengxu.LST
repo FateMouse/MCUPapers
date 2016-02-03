@@ -1,0 +1,295 @@
+C51 COMPILER V8.05a   CHENGXU                                                              05/23/2009 00:23:01 PAGE 1   
+
+
+C51 COMPILER V8.05a, COMPILATION OF MODULE CHENGXU
+OBJECT MODULE PLACED IN chengxu.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE chengxu.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #define uchar unsigned char
+   3          #define uint  unsigned  int     
+   4          uchar duan[11]={0xbf,0xc0,0Xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};         //所需的段的位码
+   5          uchar wei[6]={0X7f,0Xbf,0Xdf,0Xef,0xf7,0xfb};    //位的控制端   (开发板)
+   6          //uchar wei[6]={0X80,0X40,0X20,0X10,0x08,0x04};      //位的控制端       (仿真)
+   7          uchar aj[6]={0xbf,0Xbf,0xbf,0xbf,0xbf,0xbf};
+   8          uchar z,x,c,v,b,n;      //定义数据类型
+   9          uchar  count;
+  10          uchar  pwflag;//密码是否正确的标志位
+  11          uchar m[6]={8,8,8,8,8,8}; //初始密码
+  12          static uchar mbuf[6];///输入的密码
+  13          sbit fmq=P3^7;
+  14          uchar shuju;
+  15          uchar chuli;
+  16          sbit cesi=P3^5;
+  17          uchar QX;
+  18          /******************************************************************
+  19          
+  20          延时函数
+  21          
+  22          ******************************************************************/
+  23          void delay(uchar t)
+  24          {
+  25   1        uchar i,j;
+  26   1         for(i=0;i<t;i++)
+  27   1         {
+  28   2               for(j=1000;j>0;j--);
+  29   2               { ;
+  30   3               }
+  31   2         }
+  32   1      }
+  33          /******************************************************************
+  34          
+  35          延时函数
+  36          
+  37          ******************************************************************/
+  38          void delay1(uchar t)
+  39          {
+  40   1       unsigned char i,j,k;
+  41   1      for(i=t;i>0;i--)
+  42   1      for(j=20;j>0;j--)
+  43   1      for(k=248;k>0;k--);
+  44   1      
+  45   1      }
+  46          /**********************************************************************
+  47                          数码管动态扫描
+  48          *********************************************************************/
+  49          void xianshi()
+  50           { 
+  51   1       /*****************数据转换*****************************/ 
+  52   1            
+  53   1                P2=wei[0];
+  54   1                P0=duan[mbuf[0]];
+  55   1                delay(1);  
+C51 COMPILER V8.05a   CHENGXU                                                              05/23/2009 00:23:01 PAGE 2   
+
+  56   1                P2=wei[1];
+  57   1            P0=duan[mbuf[1]];
+  58   1                delay(1);  
+  59   1                P2=wei[2];
+  60   1            P0=duan[mbuf[2]];
+  61   1                delay(1);  
+  62   1            P2=wei[3];
+  63   1            P0=duan[mbuf[3]];
+  64   1                delay(1); 
+  65   1                P2=wei[4];
+  66   1            P0=duan[mbuf[4]];
+  67   1                delay(1);
+  68   1                P2=wei[5];
+  69   1            P0=duan[mbuf[5]];
+  70   1                delay(1); 
+  71   1      }
+  72          /*************************************************************************
+  73                                          密码对错判断    
+  74          **************************************************************************/
+  75          bit pwcmp(void)
+  76          {
+  77   1              bit flag;
+  78   1              uchar i;
+  79   1              for (i=0;i<6;i++)
+  80   1              {
+  81   2                      if (m[i]==mbuf[i])flag = 1;   //*密码正确*/
+  82   2                      else  { flag = 0;i=6; } //*密码错误*/
+  83   2              }
+  84   1              return(flag);
+  85   1      }
+  86          /*************************************************************************
+  87                                          取键值  
+  88          **************************************************************************/
+  89          uchar getkey(void)///得到键值
+  90          {
+  91   1      uchar h,l,k;
+  92   1      while(P1!=0x0f)
+  93   1        {
+  94   2         h=P1&0x0f;
+  95   2         P1=0xf0;
+  96   2         l=P1&0xf0;
+  97   2         k=h|l;
+  98   2         return(k);
+  99   2        }
+ 100   1      }
+ 101          /*************************************************************************
+ 102                                        串口接收数据
+ 103          **************************************************************************/
+ 104          void disp(void)
+ 105          {
+ 106   1      uchar i;
+ 107   1      //for(i=6;i>=0;i--)
+ 108   1      //{
+ 109   1      if(RI==1)
+ 110   1      {
+ 111   2      shuju=SBUF;
+ 112   2      chuli=shuju;
+ 113   2      if(chuli==0x00)
+ 114   2      {
+ 115   3      mbuf[i]=1;
+ 116   3      }
+ 117   2      if(chuli==0x01)
+C51 COMPILER V8.05a   CHENGXU                                                              05/23/2009 00:23:01 PAGE 3   
+
+ 118   2      {
+ 119   3      mbuf[i]=2;
+ 120   3      }
+ 121   2      if(chuli==0x02)
+ 122   2      {
+ 123   3      mbuf[i]=3;
+ 124   3      }
+ 125   2      if(chuli==0x03)
+ 126   2      {
+ 127   3      mbuf[i]=4;
+ 128   3      }
+ 129   2      if(chuli==0x04)
+ 130   2      {
+ 131   3      mbuf[i]=5;
+ 132   3      }
+ 133   2      if(chuli==0x05)
+ 134   2      {
+ 135   3      mbuf[i]=6;
+ 136   3      }
+ 137   2      if(chuli==0x06)
+ 138   2      {
+ 139   3      mbuf[i]=7;
+ 140   3      }
+ 141   2      if(chuli==0x07)
+ 142   2      {
+ 143   3      mbuf[i]=8;
+ 144   3      }
+ 145   2      if(chuli==0x08)
+ 146   2      {
+ 147   3      mbuf[i]=9;
+ 148   3      }
+ 149   2      if(chuli==0x09)
+ 150   2      {
+ 151   3      mbuf[i]=10;
+ 152   3      }
+ 153   2      if(chuli==0x75)
+ 154   2      {
+ 155   3      pwflag = pwcmp();if(pwflag==1){fmq=1;}
+ 156   3      }
+ 157   2      
+ 158   2      RI=0;
+ 159   2      i++;
+ 160   2      //}
+ 161   2      }
+ 162   1      }
+ 163          
+ 164          /*************************************************************************
+ 165                                        恢复初始值
+ 166          **************************************************************************/
+ 167          void chushiz(void)
+ 168          {         count=0;
+ 169   1            P2=wei[0];
+ 170   1                P0=duan[mbuf[0]];
+ 171   1                delay(1);  
+ 172   1                P2=wei[1];
+ 173   1            P0=duan[mbuf[1]];
+ 174   1                delay(1);  
+ 175   1                P2=wei[2];
+ 176   1            P0=duan[mbuf[2]];
+ 177   1                delay(1);  
+ 178   1            P2=wei[3];
+ 179   1            P0=duan[mbuf[3]];
+C51 COMPILER V8.05a   CHENGXU                                                              05/23/2009 00:23:01 PAGE 4   
+
+ 180   1                delay(1); 
+ 181   1                P2=wei[4];
+ 182   1            P0=duan[mbuf[4]];
+ 183   1                delay(1);
+ 184   1                P2=wei[5];
+ 185   1            P0=duan[mbuf[5]];
+ 186   1                delay(1); 
+ 187   1      }
+ 188          /*************************************************************************
+ 189                                          判断键值        
+ 190          **************************************************************************/
+ 191          void Getch (uchar i)
+ 192          {
+ 193   1      
+ 194   1      switch (i) //判断键值（那一个键按下）
+ 195   1      {
+ 196   2      case 0xe7: if (count<6) { m[count]=1;mbuf[count]=1; count++;}break;
+ 197   2      case 0xd7: if (count<6) { m[count]=2;mbuf[count]=2; count++;}break;
+ 198   2      case 0xb7: if (count<6) { m[count]=3;mbuf[count]=3; count++;}break;
+ 199   2      case 0x77: if (count<6) { m[count]=4;mbuf[count]=4; count++;}break;
+ 200   2      case 0xeb: if (count<6) { m[count]=5;mbuf[count]=5; count++;}break;
+ 201   2      case 0xdb: if (count<6) { m[count]=6;mbuf[count]=6; count++;}break;
+ 202   2      case 0xbb: if (count<6) { m[count]=7;mbuf[count]=7; count++;}break;
+ 203   2      case 0x7b: if (count<6) { m[count]=8;mbuf[count]=8; count++;}break;
+ 204   2      case 0xed: if (count<6) { m[count]=9;mbuf[count]=9; count++;}break;
+ 205   2      case 0xdd: if (count<6) { m[count]=10;mbuf[count]=10;count++;}break;
+ 206   2      case 0xbd: if (count==6) {pwflag = pwcmp();if(pwflag==1){fmq=1;}}break; 
+ 207   2      case 0x7d: if (count<=6) {count=0;QX=1;}break;
+ 208   2      
+ 209   2      } } 
+ 210          
+ 211          /*************************************************************************
+ 212                               串口初始化,波特率9600，方式1
+ 213          **************************************************************************/
+ 214          void Init_Com(void)
+ 215          {
+ 216   1      TMOD = 0x20;
+ 217   1      PCON = 0x00;
+ 218   1      SCON = 0x50;
+ 219   1      TH1 = 0xFd;
+ 220   1      TL1 = 0xFd;
+ 221   1      TR1 = 1;
+ 222   1      }
+ 223          
+ 224          /*************************************************************************
+ 225                                          主函数  
+ 226          **************************************************************************/
+ 227           void main()
+ 228          { 
+ 229   1      
+ 230   1      uchar key;
+ 231   1      Init_Com();//串口初始化
+ 232   1      count=0;
+ 233   1      P0=0xbf;
+ 234   1      fmq=0;
+ 235   1      while(1)
+ 236   1              {
+ 237   2      P1=0x0f;
+ 238   2      if(P1!=0x0f)  
+ 239   2       {
+ 240   3        delay(400);
+ 241   3         
+C51 COMPILER V8.05a   CHENGXU                                                              05/23/2009 00:23:01 PAGE 5   
+
+ 242   3        key=getkey(); 
+ 243   3        Getch(key);
+ 244   3        delay(400); 
+ 245   3        
+ 246   3       } 
+ 247   2        disp();
+ 248   2        if(cesi==0){{pwflag = pwcmp();if(pwflag==1){fmq=1;}}}
+ 249   2        xianshi();
+ 250   2       if(QX==1)
+ 251   2      {
+ 252   3      mbuf[count]=0; count++;
+ 253   3      mbuf[count]=0; count++;
+ 254   3      mbuf[count]=0; count++;
+ 255   3      mbuf[count]=0; count++;
+ 256   3      mbuf[count]=0; count++;
+ 257   3      mbuf[count]=0; 
+ 258   3      xianshi();
+ 259   3      QX=0;
+ 260   3      count=0;
+ 261   3      
+ 262   3      }  
+ 263   2      }
+ 264   1      }               
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    823    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     46       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

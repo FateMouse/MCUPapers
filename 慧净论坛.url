@@ -1,0 +1,9 @@
+[DEFAULT]
+BASEURL=http://hjdz.5d6d.com/bbs.php?action=clearpreann
+[{000214A0-0000-0000-C000-000000000046}]
+Prop3=19,2
+[InternetShortcut]
+URL=http://hjdz.5d6d.com/bbs.php?action=clearpreann
+IDList=
+IconFile=http://hjdz.5d6d.com/favicon.ico
+IconIndex=1

@@ -1,0 +1,34 @@
+主要参数
+序号  参数          数值        备注
+1     工作电压      4V~6V       直流
+2     功率          <1W  
+3     温度测量量程  0~99摄氏度
+4     温度可设定值  0~99摄氏度
+5     误差范围      精度误差小于0.5℃
+
+主要元器件
+序号  名称            作用    
+1     AT89S52单片机   运算处理 
+2     DS1802传感器    温度测量 
+3     数码管LG5011BSR 温度显示 
+4     蜂鸣器          温度报警 
+5     变压器          变压 
+6     整流桥          交流变直流 
+7     三端稳压器7805  稳定电压值 
+8     AT24C02         掉电存储器
+  
+摘要：随着时代的进步和发展，单片机技术已经普及到我们生活，工作，科研，各个领域，已经成为一种比较成熟的技术,本文将介绍一种基于单片机控制的数字温度计，本温度计属于多功能温度计，可以设置上下报警温度，当温度不在设置范围内时，可以报警。 
+
+关键词：单片机，数字控制，温度计， DS18B20，AT89S51
+
+ABSTRACT
+Along with the progress and developments of the ages, a machine technique has already make widely available we are living, work, the research, each realm, has already become a kind of to compare the mature technique, this text will introduce a kind of numerical thermometer that controls according to a machine, this thermometer belongs to the multi-function thermometer, can establish the top and bottom to report to the police the temperature, being the temperature not within the scope of establish, can report to the police.
+
+Key Word:  numeral control, thermometer，DS18B20，AT89S52
+
+ 引言
+随着人们生活水平的不断提高,单片机控制无疑是人们追求的目标之一，它所给人带来的方便也是不可否定的，其中数字温度计就是一个典型的例子，但人们对它的要求越来越高，要为现代人工作、科研、生活、提供更好的更方便的设施就需要从数单片机技术入手，一切向着数字化控制，智能化控制方向发展。
+本设计所介绍的数字温度计与传统的温度计相比，具有读数方便，测温范围广，测温准确，其输出温度采用数字显示，主要用于对测温比较准确的场所，或科研实验室使用，该设计控制器使用单片机AT89S51，测温传感器使用DS18B20，用3位共阳极LED数码管以串口传送数据,实现温度显示,能准确达到以上要求。
+  
+ 
+

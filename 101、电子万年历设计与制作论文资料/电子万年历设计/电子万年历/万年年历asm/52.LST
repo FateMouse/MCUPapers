@@ -1,0 +1,2730 @@
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE     1
+
+
+MACRO ASSEMBLER A51 V7.10
+OBJECT MODULE PLACED IN 52.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE 52.ASM SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+  007F                 1       CONFIG12 EQU 7FH
+  0021                 2       TEMPH EQU 21H
+  0020                 3       TEMPL EQU 20H
+  0022                 4       REG2 EQU 22H
+  0023                 5       REG3 EQU 23H
+  0024                 6       REG4 EQU 24H
+  0087                 7       DAT EQU P0.7
+  00B4                 8       SCLK  EQU P3.4
+  00B3                 9       IO   EQU P3.3
+  00B2                10       RST  EQU P3.2
+  0066                11       year DATA 66H
+  0065                12       month DATA 65H
+  0064                13       week DATA 64H
+  0063                14       day  DATA 63H
+  0062                15       hour DATA 62H
+  0061                16       mintue DATA 61H
+  0060                17       second DATA 60H
+                      18     
+0000                  19       ORG 0000H
+0000 02001E           20       LJMP  START
+001B                  21       ORG 001BH
+001B 0203ED           22       LJMP INTT1
+                      23     
+001E                  24     START:             ;初值
+001E 120F30           25       LCALL ZJ
+0021 D2AF             26       SETB EA
+0023 758910           27       MOV TMOD,#10H    ;计数器1，方式1
+0026 758B00           28       MOV TL1,#00H
+0029 758D00           29       MOV TH1,#00H
+002C 75328E           30       MOV 32H,#8EH
+002F 753100           31       MOV 31H,#00H     ;允许写1302
+0032 120489           32       LCALL WRITE
+0035 753290           33       MOV 32H,#90H
+0038 7531A6           34       MOV 31H,#0A6H   ;1302充电，充电电流1.1MA
+003B 120489           35       LCALL WRITE
+                      36       ;主程序~~~~~~~~~~~~~~~~~~~~~
+003E                  37     MAIN1:
+003E 75328D           38       MOV 32H,#8DH    ;读出年
+0041 1204C1           39       LCALL  READ
+0044 853166           40       MOV year,31H
+                      41     
+0047 75328B           42       MOV 32H,#8BH   ;读出星期
+004A 1204C1           43       LCALL READ
+004D 853164           44       MOV week,31H
+                      45     
+0050 753289           46       MOV 32H,#89H   ;读出月
+0053 1204C1           47       LCALL READ
+0056 853165           48       MOV month,31H
+                      49     
+0059 753287           50       MOV 32H,#87H  ;读出日
+005C 1204C1           51       LCALL READ
+005F 853163           52       MOV day,31H
+                      53     
+0062 753285           54       MOV 32H,#85H  ;读出小时
+0065 1204C1           55       LCALL READ
+0068 853162           56       MOV hour,31H
+                      57     
+006B 753283           58       MOV 32H,#83H  ;读出分钟
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE     2
+
+006E 1204C1           59       LCALL READ
+0071 853161           60       MOV mintue,31H
+                      61     
+0074 753281           62       MOV 32H,#81H  ;读出秒
+0077 1204C1           63       LCALL READ
+007A 853160           64       MOV second,31H
+                      65       ;~~~~~~~~~~~~分离缓存~~~~~~~~
+007D A866             66       MOV R0,year    ;年分离，送显示缓存
+007F 12047F           67       LCALL DIVIDE
+0082 897B             68       MOV 7BH,R1
+0084 894B             69       MOV 4BH,R1
+0086 8A7C             70       MOV 7CH,R2
+0088 8A4C             71       MOV 4CH,R2
+008A 856478           72       MOV 78H,week
+008D 856448           73       MOV 48H,week
+0090 A865             74       MOV R0,month  ;月分离，送显示缓存
+0092 12047F           75       LCALL DIVIDE
+0095 8979             76       MOV 79H,R1
+0097 8949             77       MOV 49H,R1
+0099 8A7A             78       MOV 7AH,R2
+009B 8A4A             79       MOV 4AH,R2
+009D A863             80       MOV R0,day   ;日分离，送显示缓存
+009F 12047F           81       LCALL DIVIDE
+00A2 8976             82       MOV 76H,R1
+00A4 8946             83       MOV 46H,R1
+00A6 8A77             84       MOV 77H,R2
+00A8 8A47             85       MOV 47H,R2
+00AA A862             86       MOV R0,hour ;小时分离，送显示缓存
+00AC 12047F           87       LCALL DIVIDE
+00AF 8974             88       MOV 74H,R1
+00B1 8944             89       MOV 44H,R1
+00B3 8A75             90       MOV 75H,R2
+00B5 8A45             91       MOV 45H,R2
+00B7 A861             92       MOV R0,mintue ;分钟分离，送显示缓存
+00B9 12047F           93       LCALL DIVIDE
+00BC 8972             94       MOV 72H,R1
+00BE 8942             95       MOV 42H,R1
+00C0 8A73             96       MOV 73H,R2
+00C2 8A43             97       MOV 43H,R2
+00C4 A860             98       MOV R0,second  ;秒分离，送显示缓存
+00C6 12047F           99       LCALL  DIVIDE
+00C9 8970            100       MOV 70H,R1
+00CB 8940            101       MOV 40H,R1
+00CD 8A71            102       MOV 71H,R2
+00CF 8A41            103       MOV 41H,R2
+00D1 C2AF            104       CLR EA
+00D3 1200F4          105       LCALL TOUTOU
+00D6 120D11          106       LCALL NS
+00D9 D2AF            107       SETB EA
+00DB 120E8E          108       LCALL DISPLAY
+00DE 120525          109       LCALL GENGXIAN    ;更新农历程序
+00E1 308108          110       JNB P0.1,SETG111
+00E4 30D508          111       JNB F0,SSS
+00E7 C284            112       CLR P0.4         ;非闰月，则p0.4清零,指示灯亮
+00E9 02003E          113       LJMP MAIN1
+00EC                 114     SETG111:
+00EC 0201BB          115       LJMP SETG
+00EF                 116     SSS:
+                     117       
+00EF D284            118       SETB P0.4          ;闰月，则p0.4置位，指示灯不亮
+00F1 02003E          119       LJMP MAIN1
+                     120     
+                     121     ;~~~~~~~~~~~~~~~~~~~~~~~~~  温度
+                     122     
+00F4                 123     TOUTOU:
+00F4 12011B          124       LCALL CHUSHI
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE     3
+
+00F7 12012E          125       LCALL RDTEMP
+00FA E520            126       MOV A,TEMPL
+00FC 54F0            127       ANL A,#11110000B
+00FE F520            128       MOV TEMPL,A
+0100 E521            129       MOV A,TEMPH
+0102 5407            130       ANL A,#00000111B
+0104 4520            131       ORL A,TEMPL
+0106 C4              132       SWAP A
+0107 F525            133       MOV 25H,A
+0109 E525            134       MOV A,25H
+010B 75F064          135       MOV B,#64H
+010E 84              136       DIV AB
+010F E5F0            137       MOV A,B
+0111 75F00A          138       MOV B,#0AH
+0114 84              139       DIV AB
+0115 C4              140       SWAP A
+0116 45F0            141       ORL A,B
+0118 F510            142       MOV 10H,A
+011A 22              143       RET
+011B                 144     CHUSHI:
+011B 120156          145       LCALL RESET
+011E 74CC            146       MOV A,#0CCH
+0120 120180          147       LCALL WRITE111
+0123 744E            148       MOV A,#4EH
+0125 120180          149       LCALL WRITE111
+0128 747F            150       MOV A,#CONFIG12
+012A 120180          151       LCALL WRITE111
+012D 22              152       RET
+012E                 153     RDTEMP:
+012E 120156          154       LCALL RESET
+0131 74CC            155       MOV A,#0CCH
+0133 120180          156       LCALL WRITE111
+0136 7444            157       MOV A,#44H
+0138 120180          158       LCALL WRITE111
+013B 120F82          159       LCALL DL1MS
+013E 120156          160       LCALL RESET
+0141 74CC            161       MOV A,#0CCH
+0143 120180          162       LCALL WRITE111
+0146 74BE            163       MOV A,#0BEH
+0148 120180          164       LCALL WRITE111
+014B 12019C          165       LCALL ERAD111
+014E F520            166       MOV TEMPL,A
+0150 12019C          167       LCALL ERAD111
+0153 F521            168       MOV TEMPH,A
+0155 22              169       RET
+0156                 170     RESET:
+0156                 171     LA:
+0156 D287            172       SETB DAT
+0158 7552C8          173       MOV 52H,#200
+015B                 174     LB:
+015B C287            175       CLR DAT
+015D D552FB          176       DJNZ 52H,LB
+0160 D287            177       SETB DAT
+0162 75521E          178       MOV 52H,#30
+0165                 179     LC:
+0165 D552FD          180       DJNZ 52H,LC
+0168 C3              181       CLR C
+0169 7287            182       ORL C,DAT
+016B 40EE            183       JC LB
+016D 755850          184       MOV 58H,#80
+0170                 185     LD:
+0170 7287            186       ORL C,DAT
+0172 4005            187       JC LP
+0174 D558F9          188       DJNZ 58H,LD
+0177 80DD            189       SJMP LA
+0179                 190     LP:
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE     4
+
+0179 7552FA          191       MOV 52H,#250
+017C                 192     LF:
+017C D552FD          193       DJNZ 52H,LF
+017F 22              194       RET
+0180                 195     WRITE111:
+0180 755308          196       MOV 53H,#8
+0183                 197     W51HA:
+0183 D287            198       SETB DAT
+0185 755408          199       MOV 54H,#8
+0188 13              200       RRC A
+0189 C287            201       CLR DAT
+018B                 202     W52HA:
+018B D554FD          203       DJNZ 54H,W52HA
+018E 9287            204       MOV DAT,C
+0190 75541E          205       MOV 54H,#30
+0193                 206     W53HA:
+0193 D554FD          207       DJNZ 54H,W53HA
+0196 D553EA          208       DJNZ 53H,W51HA
+0199 D287            209       SETB DAT
+019B 22              210       RET
+019C                 211     ERAD111:
+019C C2AF            212       CLR EA
+019E 755808          213       MOV 58H,#8
+01A1                 214     RD1A:
+01A1 C287            215       CLR DAT
+01A3 755406          216       MOV 54H,#6
+01A6 00              217       NOP
+01A7 D287            218       SETB DAT
+01A9                 219     RD2A:
+01A9 D554FD          220       DJNZ 54H,RD2A
+01AC A287            221       MOV C,DAT
+01AE 13              222       RRC A
+01AF 75551E          223       MOV 55H,#30
+01B2                 224     RD3A:
+01B2 D555FD          225       DJNZ 55H,RD3A
+01B5 D558E9          226       DJNZ 58H,RD1A
+01B8 D287            227       SETB DAT
+01BA 22              228       RET
+                     229     
+                     230     
+                     231     ;公历设置程序~~~~~~
+                     232     
+01BB                 233     SETG :
+01BB D28E            234       SETB TR1
+01BD D2AB            235       SETB ET1
+01BF 75328E          236       MOV 32H,#8EH
+01C2 753100          237       MOV 31H,#00H      ;允许写1302
+01C5 120489          238       LCALL WRITE
+01C8 753280          239       MOV 32H,#80H
+01CB 753180          240       MOV 31H,#80H      ;1302停止振荡
+01CE 120489          241       LCALL WRITE
+01D1                 242     GWAIT:           ;~
+01D1 120E8E          243       LCALL DISPLAY
+01D4 3081FA          244       JNB P0.1,GWAIT
+01D7                 245     SETG1:
+01D7 120E8E          246       LCALL DISPLAY
+01DA 308145          247       JNB P0.1,SETG2
+01DD 308205          248       JNB P0.2,GADDYEAR
+01E0 308311          249       JNB P0.3,JIANYEAR
+01E3 21D7            250       AJMP SETG1
+01E5                 251     GADDYEAR:
+01E5 AF66            252       MOV R7,66H      ;年加一
+01E7 12045E          253       LCALL ADD1
+01EA F566            254       MOV 66H,A
+01EC B45112          255       CJNE A,#51H,GADDYEAR1
+01EF 756600          256       MOV 66H,#00H
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE     5
+
+01F2 4101            257       AJMP GADDYEAR1
+01F4                 258     JIANYEAR:
+01F4 AF66            259       MOV R7,66H      ;年减一
+01F6 120463          260       LCALL JIAN1
+01F9 F566            261       MOV 66H,A
+01FB B40003          262       CJNE A,#00H,GADDYEAR1
+01FE 756651          263       MOV 66H,#51H
+0201                 264     GADDYEAR1:
+0201 75328C          265       MOV 32H,#8CH    ;年值送人1302
+0204 856631          266       MOV 31H,66H
+0207 120489          267       LCALL WRITE
+020A A866            268       MOV R0,66H
+020C 12047F          269       LCALL DIVIDE    ;年分离送显示缓存
+020F 894B            270       MOV 4BH,R1
+0211 897B            271       MOV 7BH,R1
+0213 8A4C            272       MOV 4CH,R2
+0215 8A7C            273       MOV 7CH,R2
+0217                 274     WAITT1:          ;~~~~~~~
+0217 120E8E          275       LCALL DISPLAY
+021A 3082FA          276       JNB P0.2,WAITT1
+021D 3083F7          277       JNB P0.3,WAITT1
+0220 21D7            278       AJMP SETG1
+0222                 279     SETG2:
+0222 D20A            280       SETB 0AH         ;调月时闪标志
+0224                 281     GWAIT2:
+0224 120E8E          282       LCALL DISPLAY
+0227 3081FA          283       JNB P0.1,GWAIT2
+022A                 284     SETG3:
+022A 120E8E          285       LCALL DISPLAY
+022D 308145          286       JNB P0.1,SETG4
+0230 308205          287       JNB P0.2,GADDMONTH
+0233 308311          288       JNB P0.3,JIANMONTH
+0236 412A            289       AJMP SETG3
+0238                 290     GADDMONTH:
+0238 AF65            291       MOV R7,65H     ;月加一
+023A 12045E          292       LCALL ADD1
+023D F565            293       MOV 65H,A
+023F B41312          294       CJNE A,#13H,GADDMONTH1
+0242 756501          295       MOV 65H,#01H
+0245 4154            296       AJMP GADDMONTH1
+0247                 297     JIANMONTH:
+0247 AF65            298       MOV R7,65H     ;月减一
+0249 120463          299       LCALL JIAN1
+024C F565            300       MOV 65H,A
+024E B40003          301       CJNE A,#00H,GADDMONTH1
+0251 756512          302       MOV 65H,#12H
+0254                 303     GADDMONTH1:
+0254 753288          304       MOV 32H,#88H  ;月值送人1302
+0257 856531          305       MOV 31H,65H
+025A 120489          306       LCALL WRITE
+025D A865            307       MOV R0,65H
+025F 12047F          308       LCALL DIVIDE  ;月分离，送显示缓存
+0262 8979            309       MOV 79H,R1
+0264 8949            310       MOV 49H,R1
+0266 8A7A            311       MOV 7AH,R2
+0268 8A4A            312       MOV 4AH,R2
+026A                 313     WAITT2:            ;~
+026A 120E8E          314       LCALL DISPLAY
+026D 3082FA          315       JNB P0.2,WAITT2
+0270 3083F7          316       JNB P0.3,WAITT2
+0273 412A            317       AJMP SETG3
+0275                 318     SETG4:
+0275 D20B            319       SETB 0BH    ;调日时闪标志
+0277                 320     GWAIT4:
+0277 120E8E          321       LCALL DISPLAY
+027A 3081FA          322       JNB P0.1,GWAIT4
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE     6
+
+027D                 323     SETG5:
+027D 120E8E          324       LCALL DISPLAY
+0280 308143          325       JNB P0.1,SETG6
+0283 308205          326       JNB P0.2,GADDDAY
+0286 30830F          327       JNB P0.3,JIANDAY
+0289 417D            328       AJMP SETG5
+028B                 329     GADDDAY:
+028B AF63            330       MOV R7,63H     ;日加一
+028D 12045E          331       LCALL ADD1
+0290 F563            332       MOV 63H,A
+0292 B43210          333       CJNE A,#32H,GADDDAY1
+0295 756301          334       MOV  63H,#01H
+0298                 335     JIANDAY:
+0298 AF63            336       MOV R7,63H     ;日减一
+029A 120463          337       LCALL JIAN1
+029D F563            338       MOV 63H,A
+029F B40003          339       CJNE A,#00H,GADDDAY1
+02A2 756331          340       MOV  63H,#31H
+02A5                 341     GADDDAY1:
+02A5 753286          342       MOV 32H,#86H ;日值送人1302
+02A8 856331          343       MOV 31H,63H
+02AB 120489          344       LCALL WRITE
+02AE A863            345       MOV R0,63H
+02B0 12047F          346       LCALL DIVIDE  ;日分离，送显示缓存
+02B3 8976            347       MOV 76H,R1
+02B5 8946            348       MOV 46H,R1
+02B7 8A77            349       MOV 77H,R2
+02B9 8A47            350       MOV 47H,R2
+02BB                 351     WAITT3:              ;~~~
+02BB 120E8E          352       LCALL DISPLAY
+02BE 3082FA          353       JNB P0.2,WAITT3
+02C1 3083F7          354       JNB P0.3,WAITT3
+02C4 417D            355       AJMP SETG5
+02C6                 356     SETG6:
+02C6 D20C            357       SETB 0CH    ;调星期时闪标志
+02C8                 358     GWAIT6:
+02C8 120E8E          359       LCALL DISPLAY
+02CB 3081FA          360       JNB P0.1,GWAIT6
+02CE                 361     SETG7:
+02CE 120E8E          362       LCALL DISPLAY
+02D1 308141          363       JNB P0.1,SETG8
+02D4 308205          364       JNB P0.2,GADDWEEK
+02D7 308311          365       JNB P0.3,JIANWEEK
+02DA 41CE            366       AJMP SETG7
+02DC                 367     GADDWEEK:
+02DC AF64            368       MOV R7,64H       ;星期加一
+02DE 12045E          369       LCALL ADD1
+02E1 F564            370       MOV 64H,A
+02E3 B40712          371       CJNE A,#07H,GADDWEEK1
+02E6 756400          372       MOV  64H,#00H
+02E9 41F8            373       AJMP GADDWEEK1
+02EB                 374     JIANWEEK:
+02EB AF64            375       MOV R7,64H       ;星期减一
+02ED 120463          376       LCALL JIAN1
+02F0 F564            377       MOV 64H,A
+02F2 B40003          378       CJNE A,#00H,GADDWEEK1
+02F5 756406          379       MOV  64H,#06H
+02F8                 380     GADDWEEK1:
+02F8 75328A          381       MOV 32H,#8AH
+02FB 856431          382       MOV 31H,64H     ;星期值送人1302
+02FE 120489          383       LCALL WRITE
+0301 A864            384       MOV R0,64H
+0303 12047F          385       LCALL DIVIDE     ;星期值分离送显示缓存
+0306 8948            386       MOV 48H,R1
+0308 8978            387       MOV 78H,R1
+030A                 388     WAITT4:                ;~~~~
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE     7
+
+030A 120E8E          389       LCALL DISPLAY
+030D 3082FA          390       JNB P0.2,WAITT4
+0310 3083F7          391       JNB P0.3,WAITT4
+0313 41CE            392       AJMP SETG7
+0315                 393     SETG8:
+0315 D20D            394       SETB 0DH       ;调小时时闪标志
+0317                 395     GWAIT8:
+0317 120E8E          396       LCALL DISPLAY
+031A 3081FA          397       JNB P0.1,GWAIT8
+031D                 398     SETG9:
+031D 120E8E          399       LCALL DISPLAY
+0320 308145          400       JNB P0.1,SETG10
+0323 308205          401       JNB P0.2,GADDHOUR
+0326 308311          402       JNB P0.3,JIANHOUR
+0329 611D            403       AJMP SETG9
+032B                 404     GADDHOUR:
+032B AF62            405       MOV R7,62H        ;小时加一
+032D 12045E          406       LCALL ADD1
+0330 F562            407       MOV 62H,A
+0332 B42412          408       CJNE A,#24H,GADDHOUR1
+0335 756200          409       MOV 62H,#00H
+0338 6147            410       AJMP GADDHOUR1
+033A                 411     JIANHOUR:
+033A AF62            412       MOV R7,62H        ;小时减一
+033C 120463          413       LCALL JIAN1
+033F F562            414       MOV 62H,A
+0341 B40003          415       CJNE A,#00H,GADDHOUR1
+0344 756223          416       MOV 62H,#23H
+0347                 417     GADDHOUR1:
+0347 753284          418       MOV 32H,#84H     ;小时值送人1302
+034A 856231          419       MOV 31H,62H
+034D 120489          420       LCALL WRITE
+0350 A862            421       MOV R0,62H
+0352 12047F          422       LCALL DIVIDE      ;小时值分离送显示缓存
+0355 8974            423       MOV 74H,R1
+0357 8944            424       MOV 44H,R1
+0359 8A75            425       MOV 75H,R2
+035B 8A45            426       MOV 45H,R2
+035D                 427     WAITT5:              ;~~~~~
+035D 120E8E          428       LCALL DISPLAY
+0360 3082FA          429       JNB P0.2,WAITT5
+0363 3083F7          430       JNB P0.3,WAITT5
+0366 611D            431       AJMP SETG9
+0368                 432     SETG10:
+0368 D20E            433       SETB 0EH        ;调分时候闪标志
+036A                 434     GWAIT10:
+036A 120E8E          435       LCALL DISPLAY
+036D 3081FA          436       JNB P0.1,GWAIT10
+0370                 437     SETG11:
+0370 120E8E          438       LCALL DISPLAY
+0373 308145          439       JNB P0.1,SETGOUT
+0376 308205          440       JNB P0.2,GADDMINTUE
+0379 308311          441       JNB P0.3,JIANMINTUE
+037C 6170            442       AJMP SETG11
+037E                 443     GADDMINTUE:
+037E AF61            444       MOV R7,61H      ;分钟加一
+0380 12045E          445       LCALL ADD1
+0383 F561            446       MOV 61H,A
+0385 B46012          447       CJNE A,#60H,GADDMINTUE1
+0388 756100          448       MOV 61H,#00H
+038B 619A            449       AJMP GADDMINTUE1
+038D                 450     JIANMINTUE:
+038D AF61            451       MOV R7,61H      ;分钟减一
+038F 120463          452       LCALL JIAN1
+0392 F561            453       MOV 61H,A
+0394 B40003          454       CJNE A,#00H,GADDMINTUE1
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE     8
+
+0397 756159          455       MOV 61H,#59H
+039A                 456     GADDMINTUE1:
+039A 753282          457       MOV 32H,#82H    ;分钟值送人1302
+039D 856131          458       MOV 31H,61H
+03A0 120489          459       LCALL WRITE
+03A3 A861            460       MOV R0,61H
+03A5 12047F          461       LCALL DIVIDE    ;分钟值分离送显示缓存
+03A8 8972            462       MOV 72H,R1
+03AA 8942            463       MOV 42H,R1
+03AC 8A73            464       MOV 73H,R2
+03AE 8A43            465       MOV 43H,R2
+03B0                 466     WAITT6:
+03B0 120E8E          467       LCALL DISPLAY
+03B3 3082FA          468       JNB P0.2,WAITT6
+03B6 3083F7          469       JNB P0.3,WAITT6
+03B9 6170            470       AJMP SETG11
+                     471     
+03BB                 472     SETGOUT:
+03BB 120E8E          473       LCALL DISPLAY
+03BE 3081FA          474       JNB P0.1,SETGOUT
+03C1 120525          475       LCALL GENGXIAN
+03C4 753280          476       MOV 32H,#80H
+03C7 753100          477       MOV 31H,#00H     ;1302晶振开始振荡
+03CA 120489          478       LCALL  WRITE
+03CD 75328E          479       MOV 32H,#8EH
+03D0 753180          480       MOV 31H,#80H     ;禁止写入1302
+03D3 120489          481       LCALL  WRITE
+03D6 C208            482       CLR 08H
+03D8 C209            483       CLR 09H
+03DA C20A            484       CLR 0AH
+03DC C20B            485       CLR 0BH
+03DE C20C            486       CLR 0CH
+03E0 C20D            487       CLR 0DH
+03E2 C20E            488       CLR 0EH
+03E4 C20F            489       CLR 0FH
+03E6 C2AB            490       CLR ET1                 ;关闪中断
+03E8 C28E            491       CLR TR1
+03EA 02003E          492       LJMP MAIN1
+                     493     
+                     494     ;;闪动调时程序~~~~~~~~~~~~~~~~~~~~~~~~~~~
+03ED                 495     INTT1:
+03ED C0E0            496       PUSH ACC
+03EF C0D0            497       PUSH PSW
+03F1                 498     GFLASH:
+03F1 B20F            499       CPL 0FH
+03F3 200F2C          500       JB 0FH,GFLASH1
+03F6 854C7C          501       MOV 7CH,4CH  ;全部显示
+03F9 854B7B          502       MOV 7BH,4BH
+03FC 854A7A          503       MOV 7AH,4AH
+03FF 854979          504       MOV 79H,49H
+0402 854878          505       MOV 78H,48H
+0405 854777          506       MOV 77H,47H
+0408 854676          507       MOV 76H,46H
+040B 854575          508       MOV 75H,45H
+040E 854474          509       MOV 74H,44H
+0411 854373          510       MOV 73H,43H
+0414 854272          511       MOV 72H,42H
+0417 854171          512       MOV 71H,41H
+041A 854070          513       MOV 70H,40H
+041D                 514     GFLASHOUT:
+041D D0D0            515       POP PSW
+041F D0E0            516       POP ACC
+0421 32              517       RETI
+0422                 518     GFLASH1:
+0422 200A08          519       JB 0AH,GFLASH2 ;调年闪
+0425 757C0F          520       MOV 7CH,#0FH
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE     9
+
+0428 757B0F          521       MOV 7BH,#0FH
+042B 811D            522       AJMP GFLASHOUT
+042D                 523     GFLASH2:
+042D 200B08          524       JB 0BH,GFLASH3 ;调月闪
+0430 757A0F          525       MOV 7AH,#0FH
+0433 75790F          526       MOV 79H,#0FH
+0436 811D            527       AJMP GFLASHOUT
+0438                 528     GFLASH3:
+0438 200C08          529       JB 0CH,GFLASH4 ;调日闪
+043B 75770F          530       MOV 77H,#0FH
+043E 75760F          531       MOV 76H,#0FH
+0441 811D            532       AJMP GFLASHOUT
+0443                 533     GFLASH4:
+0443 200D05          534       JB 0DH,GFLASH5 ;调星期闪
+0446 75780F          535       MOV 78H,#0FH
+0449 811D            536       AJMP GFLASHOUT
+044B                 537     GFLASH5:
+044B 200E08          538       JB 0EH,GFLASH6 ;调小时闪
+044E 75750F          539       MOV 75H,#0FH
+0451 75740F          540       MOV 74H,#0FH
+0454 811D            541       AJMP GFLASHOUT
+0456                 542     GFLASH6:
+                     543       
+0456 75730F          544       MOV 73H,#0FH  ;调分钟闪
+0459 75720F          545       MOV 72H,#0FH
+045C 811D            546       AJMP GFLASHOUT
+                     547     
+                     548     ;加一程序~~~~~~~~~~~~~~~~~~~~~~~~~
+                     549     
+045E                 550     ADD1:
+045E EF              551       MOV A,R7
+045F 2401            552       ADD A,#1
+0461 D4              553       DA A
+0462 22              554       RET
+                     555     ;减一程序~~~~~~~~~~~~~~~~~~~~~~~~~
+0463                 556     JIAN1:
+0463 EF              557       MOV A,R7
+0464 14              558       DEC A
+0465 B44F02          559       CJNE A,#4FH,KK1
+0468 7449            560       MOV A,#49H
+046A                 561     KK1:
+046A B43F02          562       CJNE A,#3FH,KK2
+046D 7439            563       MOV A,#39H
+046F                 564     KK2:
+046F B42F02          565       CJNE A,#2FH,KK3
+0472 7429            566       MOV A,#29H
+0474                 567     KK3:
+0474 B41F02          568       CJNE A,#1FH,KK4
+0477 7419            569       MOV A,#19H
+0479                 570     KK4:
+0479 B40F02          571       CJNE A,#0FH,KK5
+047C 7409            572       MOV A,#09H
+047E                 573     KK5:
+047E 22              574       RET
+                     575     
+                     576     ;分离程序~~~~~~~~~~~~~~~~~~~~~~~~~
+                     577     
+047F                 578     DIVIDE:
+047F E8              579       MOV A,R0
+0480 540F            580       ANL A,#0FH
+0482 F9              581       MOV R1,A
+0483 E8              582       MOV A,R0
+0484 C4              583       SWAP A
+0485 540F            584       ANL A,#0FH
+0487 FA              585       MOV R2,A
+0488 22              586       RET
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    10
+
+                     587     
+                     588     ;写1302程序~~~~~~~
+                     589     
+0489                 590     WRITE:
+0489 C2B4            591       CLR SCLK
+048B 00              592       NOP
+048C D2B2            593       SETB RST
+048E 00              594       NOP
+048F E532            595       MOV A,32H
+0491 7C08            596       MOV R4,#8
+0493                 597     WRITE1:
+0493 13              598       RRC A     ;送地址给1302
+0494 00              599       NOP
+0495 00              600       NOP
+0496 C2B4            601       CLR SCLK
+0498 00              602       NOP
+0499 00              603       NOP
+049A 00              604       NOP
+049B 92B3            605       MOV IO,C
+049D 00              606       NOP
+049E 00              607       NOP
+049F 00              608       NOP
+04A0 D2B4            609       SETB SCLK
+04A2 00              610       NOP
+04A3 00              611       NOP
+04A4 DCED            612       DJNZ R4,WRITE1
+04A6 C2B4            613       CLR SCLK
+04A8 00              614       NOP
+04A9 E531            615       MOV A,31H
+04AB 7C08            616       MOV R4,#8
+04AD                 617     WRITE2:
+04AD 13              618       RRC A
+04AE 00              619       NOP     ;送数据给1302
+04AF C2B4            620       CLR SCLK
+04B1 00              621       NOP
+04B2 00              622       NOP
+04B3 92B3            623       MOV IO,C
+04B5 00              624       NOP
+04B6 00              625       NOP
+04B7 00              626       NOP
+04B8 D2B4            627       SETB SCLK
+04BA 00              628       NOP
+04BB 00              629       NOP
+04BC DCEF            630       DJNZ R4,WRITE2
+04BE C2B2            631       CLR RST
+04C0 22              632       RET
+                     633     
+                     634     ;读1302程序~~~~~~~~~~~~~~~~~~~~~~~~~
+                     635     
+04C1                 636     READ:
+04C1 C2B4            637       CLR SCLK
+04C3 00              638       NOP
+04C4 00              639       NOP
+04C5 D2B2            640       SETB RST
+04C7 00              641       NOP
+04C8 E532            642       MOV A,32H
+04CA 7C08            643       MOV R4,#8
+04CC                 644     READ1:
+04CC 13              645       RRC A    ;送地址给1302
+04CD 00              646       NOP
+04CE 92B3            647       MOV IO,C
+04D0 00              648       NOP
+04D1 00              649       NOP
+04D2 00              650       NOP
+04D3 D2B4            651       SETB SCLK
+04D5 00              652       NOP
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    11
+
+04D6 00              653       NOP
+04D7 00              654       NOP
+04D8 C2B4            655       CLR SCLK
+04DA 00              656       NOP
+04DB 00              657       NOP
+04DC DCEE            658       DJNZ R4,READ1
+04DE 7C08            659       MOV R4,#8
+04E0                 660     READ2:
+04E0 C2B4            661       CLR SCLK
+04E2 00              662       NOP    ;从1302中读出数据
+04E3 00              663       NOP
+04E4 00              664       NOP
+04E5 A2B3            665       MOV C,IO
+04E7 00              666       NOP
+04E8 00              667       NOP
+04E9 00              668       NOP
+04EA 00              669       NOP
+04EB 00              670       NOP
+04EC 13              671       RRC A
+04ED 00              672       NOP
+04EE 00              673       NOP
+04EF 00              674       NOP
+04F0 00              675       NOP
+04F1 D2B4            676       SETB SCLK
+04F3 00              677       NOP
+04F4 DCEA            678       DJNZ R4,READ2
+04F6 F531            679       MOV 31H,A
+04F8 C2B2            680       CLR RST
+04FA 22              681       RET
+                     682     ;BCD码转换为10进制程序~~~~~
+                     683     
+04FB                 684     BCD_10:
+04FB E8              685       MOV A,R0
+04FC 540F            686       ANL A,#0FH
+04FE F9              687       MOV R1,A  ;高位×10， 加低位
+04FF E8              688       MOV A,R0
+0500 C4              689       SWAP A
+0501 540F            690       ANL A,#0FH
+0503 75F00A          691       MOV B,#10
+0506 A4              692       MUL AB
+0507 29              693       ADD A,R1
+0508 F8              694       MOV R0,A
+0509 22              695       RET
+                     696     
+                     697     ;查一年数据程序~~~~~~~~~~~~~~~~
+                     698     
+050A                 699     CHECKMONTH:
+050A 1204FB          700       LCALL BCD_10
+050D E8              701       MOV A,R0
+050E 75F004          702       MOV B,#04
+0511 A4              703       MUL AB
+0512 F9              704       MOV R1,A
+0513 900F8B          705       MOV DPTR,#TAB
+0516 93              706       MOVC A,@A+DPTR
+0517 FF              707       MOV R7,A   ;第一字节送R7
+0518 09              708       INC R1
+0519 E9              709       MOV A,R1
+051A 93              710       MOVC A,@A+DPTR
+051B FE              711       MOV R6,A  ;第二字节送R6
+051C 09              712       INC R1
+051D E9              713       MOV A,R1
+051E 93              714       MOVC A,@A+DPTR
+051F FD              715       MOV R5,A   ;第三字节送R6
+0520 09              716       INC R1
+0521 E9              717       MOV A,R1
+0522 93              718       MOVC A,@A+DPTR
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    12
+
+0523 FC              719       MOV R4,A  ;第四字节送R4
+0524 22              720       RET
+                     721     
+                     722     
+                     723     
+                     724     ;;;;;自动更新农历;;;
+                     725                             ;;;;;;;;;;;;;;;;;;;;
+0525 7A00            726                   GENGXIAN:    MOV R2,#00H
+0527 7B00            727                                MOV R3,#00H
+0529 E565            728                                MOV A,month
+052B B40109          729                                CJNE A,#01H,GM2
+052E A863            730                                MOV R0,day   ;当前月为一月
+0530 1204FB          731                                LCALL BCD_10 ;当前日转换为10进制，送R2
+0533 E8              732                                MOV A,R0
+0534 FA              733                                MOV R2,A
+0535 A1DD            734                                AJMP TIAOZHENG1
+0537 B4020B          735                        GM2:  CJNE A,#02H,GM3
+053A A863            736                                MOV R0,day    ;当前月为二月
+053C 1204FB          737                                LCALL BCD_10 ;;当前日转换为10进制，
+053F E8              738                                MOV A,R0      ;再加31，送R2
+0540 241F            739                                ADD A,#31
+0542 FA              740                                MOV R2,A
+0543 A1DD            741                                AJMP TIAOZHENG1
+0545 B4030B          742                         GM3: CJNE A,#03H,GM4
+0548 A863            743                                MOV R0,day    ;当前月为三月
+054A 1204FB          744                                LCALL BCD_10  ;当前日转换为10进制，
+054D E8              745                                MOV A,R0      ;再加59，送R2
+054E 243B            746                                ADD A,#59
+0550 FA              747                                MOV R2,A
+0551 A1DD            748                                AJMP TIAOZHENG1
+0553 B4040B          749                        GM4:  CJNE A,#04H,GM5
+0556 A863            750                                MOV R0,day     ;当前月为四月
+0558 1204FB          751                                LCALL BCD_10   ;;当前日转换为10进制,
+055B E8              752                                MOV A,R0       ;再加90，送R2
+055C 245A            753                                ADD A,#90
+055E FA              754                                MOV R2,A
+055F A1DD            755                                AJMP TIAOZHENG1
+0561 B4050B          756                         GM5: CJNE A,#05H,GM6
+0564 A863            757                                MOV R0,day     ;当前月为五月
+0566 1204FB          758                                LCALL BCD_10   ;当前日转换为10进制，
+0569 E8              759                                MOV A,R0       ;再加120，送R2
+056A 2478            760                                ADD A,#120
+056C FA              761                                MOV R2,A
+056D A1DD            762                                AJMP TIAOZHENG1
+056F B4060B          763                         GM6: CJNE A,#06H,GM7
+0572 A863            764                                MOV R0,day     ;当前月为六月
+0574 1204FB          765                                LCALL BCD_10   ;当前日转换为10进制，
+0577 E8              766                                MOV A,R0       ;再加151，送R2
+0578 2497            767                                ADD A,#151
+057A FA              768                                MOV R2,A
+057B A1DD            769                                AJMP TIAOZHENG1
+057D B4070B          770                         GM7: CJNE A,#07H,GM8
+0580 A863            771                                MOV R0,day     ;当前月位七月
+0582 1204FB          772                                LCALL BCD_10   ;当前日转换为10进制，
+0585 E8              773                                MOV A,R0       ;再加181，送R2
+0586 24B5            774                                ADD A,#181
+0588 FA              775                                MOV R2,A
+0589 A1DD            776                                AJMP TIAOZHENG1
+058B B4080B          777                          GM8:CJNE A,#08H,GM9
+058E A863            778                                MOV R0,day     ;当前月为八月
+0590 1204FB          779                                LCALL BCD_10   ;当前日转换为10进制,
+0593 E8              780                                MOV A,R0       ;再加212，送R2
+0594 24D4            781                                ADD A,#212
+0596 FA              782                                MOV R2,A
+0597 A1DD            783                                AJMP TIAOZHENG1
+0599 B40914          784                          GM9:CJNE A,#09H,GM10
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    13
+
+059C A863            785                                MOV R0,day    ;当前月为九月
+059E 1204FB          786                                LCALL BCD_10  ;当前日转换为10进制,
+05A1 E8              787                                MOV A,R0      ;再加243
+05A2 C3              788                                CLR C
+05A3 24F3            789                                ADD A,#243
+05A5 4003            790                                JC GGG
+05A7 FA              791                                MOV R2,A       ;A没有溢出，送R2
+05A8 A1DD            792                                AJMP TIAOZHENG1
+05AA 7BFF            793                        GGG:  MOV R3,#0FFH   ;A溢出，A加一送R2
+05AC 04              794                                INC A          ;R3中送#0ffh
+05AD FA              795                                MOV R2,A
+05AE A1DD            796                                AJMP TIAOZHENG1
+05B0 B4100D          797                        GM10: CJNE A,#10H,GM11
+05B3 A863            798                                MOV R0,day    ;当前月为10月
+05B5 1204FB          799                                LCALL BCD_10   ;当前日转换为10进制,
+05B8 E8              800                                MOV A,R0       ;再加18，送R2
+05B9 2412            801                                ADD A,#18      ;R3中送＃0FFH
+05BB FA              802                                MOV R2,A
+05BC 7BFF            803                                MOV R3,#0FFH
+05BE A1DD            804                                AJMP TIAOZHENG1
+05C0 B4110D          805                         GM11:CJNE A,#11H,GM12
+05C3 A863            806                                MOV R0,day    ;当前月为11月
+05C5 1204FB          807                                LCALL BCD_10  ;当前日转换为10进制,
+05C8 E8              808                                MOV A,R0      ;再加49，送R2
+05C9 2431            809                                ADD A,#49     ;R3中送＃0FFH
+05CB FA              810                                MOV R2,A
+05CC 7BFF            811                                MOV R3,#0FFH
+05CE A1DD            812                                AJMP TIAOZHENG1
+05D0 A863            813                        GM12: MOV R0,day     ;当前月为12月
+05D2 1204FB          814                                LCALL BCD_10   ;当前日转换为10进制,
+05D5 E8              815                                MOV A,R0       ;再加79，送R2
+05D6 244F            816                                ADD A,#79      ;R3中送＃0FFH
+05D8 FA              817                                MOV R2,A
+05D9 7BFF            818                                MOV R3,#0FFH
+05DB A1DD            819                                AJMP TIAOZHENG1
+05DD E566            820                 TIAOZHENG1: MOV A,year
+05DF 75F004          821                                MOV B,#04
+05E2 84              822                                DIV AB
+05E3 E5F0            823                                MOV A,B
+05E5 7016            824                                JNZ GGG1
+05E7 E565            825                                MOV A,65H   ;当前年为闰年
+05E9 B40102          826                                CJNE A,#01H,AAAA
+05EC A1FD            827                                AJMP GGG1        ;当前月是1
+05EE B40202          828                     AAAA:   CJNE A,#02H,BBBB
+05F1 A1FD            829                                AJMP GGG1       ;当前月是2
+05F3 BAFF06          830                     BBBB:   CJNE  R2,#0FFH,GGG2
+05F6 7BFF            831                                MOV R3,#0FFH   ;当前月不是1和2，
+05F8 7A01            832                                MOV R2,#01H    ;R1和R2总和加一
+05FA A1FD            833                                AJMP GGG1
+05FC 0A              834                     GGG2:   INC R2
+05FD A866            835                     GGG1:   MOV R0,year    ;查一年数据
+05FF 12050A          836                                LCALL CHECKMONTH
+0602 EA              837                                MOV A,R2
+0603 C3              838                                CLR C
+0604 9F              839                                SUBB A,R7
+0605 92A7            840                                MOV P2.7,C
+0607 B4010F          841                                CJNE A,#01H,GGG3
+060A 7A01            842                                MOV R2,#01H
+060C EB              843                                MOV A,R3
+060D B40025          844                                CJNE A,#00H,NEW1
+0610 755701          845                                MOV  57H,#01H   ;R2和R3总和减R7
+0613 755601          846                                MOV  56H,#01H   ;为0，则为春节
+0616 020CF0          847                                LJMP S_PLAY
+0619 B40003          848                       GGG3:  CJNE A,#00H,GGG6
+061C FA              849                                MOV R2,A
+061D C146            850                                AJMP OLD
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    14
+
+061F 30A719          851                       GGG6: JNB P2.7,NEW2
+0622 EF              852                                MOV A,R7
+0623 C3              853                                CLR C
+0624 9A              854                                SUBB A,R2
+0625 FF              855                                MOV R7,A
+0626 BBFF08          856                                CJNE R3,#0FFH,GGG5
+0629 EB              857                                MOV A,R3
+062A C3              858                                CLR C
+062B 9F              859                                SUBB A,R7
+062C FA              860                                MOV R2,A
+062D 7B00            861                                MOV R3,#00H
+062F C1AC            862                                AJMP NEW
+0631 EF              863                       GGG5:  MOV A,R7
+0632 FA              864                                MOV R2,A
+0633 C146            865                                AJMP OLD
+0635 7AFF            866                        NEW1: MOV R2,#0FFH
+0637 7B01            867                                MOV R3,#01H
+0639 C1AC            868                                AJMP NEW
+063B FA              869                        NEW2: MOV R2,A
+063C EB              870                                MOV A,R3
+063D B4FF04          871                                CJNE A,#0FFH,GGG4
+0640 EA              872                                MOV A,R2
+0641 FB              873                                MOV R3,A
+0642 7AFF            874                                MOV R2,#0FFH
+0644 C1AC            875                        GGG4: AJMP NEW
+                     876     
+                     877       ;OLD 农历为公历的前一年
+                     878     
+0646 E566            879                      OLD:    MOV A,year
+0648 14              880                                DEC A
+0649 F8              881                                MOV R0,A
+064A 12050A          882                                LCALL CHECKMONTH
+064D EA              883                                MOV A,R2
+064E C3              884                                CLR C
+064F 941D            885                                SUBB A,#29
+0651 92A7            886                                MOV P2.7,C
+0653 FE              887                                MOV R6,A
+0654 ED              888                                MOV A,R5
+0655 20E007          889                                JB ACC.0,AAA ;12月为小月，转到AAA
+0658 EA              890                                MOV A,R2
+0659 C3              891                                CLR C
+065A 941E            892                                SUBB A,#30
+065C 92A7            893                                MOV P2.7,C
+065E FE              894                                MOV R6,A
+065F EE              895                          AAA:MOV A,R6
+0660 B40010          896                                CJNE A,#00H,BBB
+0663 755629          897                                MOV 56H,#29H ;为0，则为11月最后一天
+0666 ED              898                                MOV A,R5    ;小月为11月29
+0667 20E103          899                                JB ACC.1,CCC
+066A 755630          900                                MOV 56H,#30H  ;大月为11月30
+066D 755711          901                          CCC:MOV 57H,#11H
+0670 020CF0          902                                LJMP S_PLAY
+0673 30A71B          903                          BBB:JNB P2.7, DDD
+0676 741D            904                                MOV A,#29  ; CY位置位，位12月
+0678 C3              905                                CLR C
+0679 9A              906                                SUBB A,R2
+067A FC              907                                MOV R4,A
+067B ED              908                                MOV A,R5
+067C 20E005          909                                JB ACC.0,EEE
+067F 741E            910                                MOV A,#30
+0681 C3              911                                CLR C
+0682 9A              912                                SUBB A,R2
+0683 FC              913                                MOV R4,A
+0684 EC              914                         EEE: MOV A,R4
+0685 F8              915                                MOV R0,A
+0686 120D08          916                                LCALL D_BCD
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    15
+
+0689 F556            917                                MOV 56H,A
+068B 755712          918                                MOV 57H,#12H
+068E 020CF0          919                                LJMP S_PLAY
+0691 741D            920                         DDD: MOV A,#29 ;CY为0，为11月
+0693 C3              921                                CLR C
+0694 9C              922                                SUBB A,R4
+0695 F9              923                                MOV R1,A
+0696 ED              924                                MOV A,R5
+0697 20E105          925                                JB ACC.1, FFF
+069A 741E            926                                MOV A,#30
+069C C3              927                                CLR C
+069D 9C              928                                SUBB A,R4
+069E F9              929                                MOV R1,A
+069F E9              930                        FFF:   MOV A,R1
+06A0 F8              931                                MOV R0,A
+06A1 120D08          932                                LCALL D_BCD
+06A4 F556            933                                MOV 56H,A
+06A6 755711          934                                MOV 57H,#11H
+06A9 020CF0          935                                LJMP S_PLAY
+                     936      ;NEW此时R2中的值为FFH时
+                     937      ; R3有值，否则为0
+06AC                 938     NEW:
+06AC 00              939       NOP
+06AD                 940     M1:
+06AD EA              941       MOV A,R2   ;R2减一月天数
+06AE C3              942       CLR C
+06AF 941D            943       SUBB A,#29
+06B1 F9              944       MOV R1,A
+06B2 EE              945       MOV A,R6
+06B3 20E605          946       JB ACC.6,SM11
+06B6 EA              947       MOV A,R2
+06B7 C3              948       CLR C
+06B8 941E            949       SUBB A,#30
+06BA F9              950       MOV R1,A
+06BB                 951     SM11:
+06BB 4004            952       JC SM12
+06BD E9              953       MOV A,R1  ;R2减1月天数，够减
+06BE FA              954       MOV R2,A  ;转二月
+06BF C1CE            955       AJMP M2
+06C1                 956     SM12:
+06C1 BB0003          957       CJNE R3,#00H,M13 ;R2减1月天数
+06C4 020972          958       LJMP Y1           ;不够减，判R3为0否
+06C7                 959     M13:
+06C7 EA              960       MOV A,R2          ;不为0，R3加到R2中
+06C8 2B              961       ADD A,R3          ;再让一月减
+06C9 FA              962       MOV R2,A          ;还不够，则转Y1
+06CA 7B00            963       MOV R3,#00H
+06CC C1AD            964       AJMP M1
+06CE                 965     M2:
+06CE C3              966       CLR C    ;R2减一月天数，够减
+06CF EA              967       MOV A,R2 ;转三月
+06D0 941D            968       SUBB A,#29
+06D2 F9              969       MOV R1,A
+06D3 EE              970       MOV A,R6
+06D4 20E505          971       JB ACC.5,M21
+06D7 EA              972       MOV A,R2
+06D8 C3              973       CLR C
+06D9 941E            974       SUBB A,#30
+06DB F9              975       MOV R1,A
+06DC                 976     M21:
+06DC 4004            977       JC M22
+06DE E9              978       MOV A,R1  ;R2减2月天数，够减
+06DF FA              979       MOV R2,A
+06E0 C1EF            980       AJMP MM2
+06E2                 981     M22:
+06E2 BB0003          982       CJNE R3,#00H,M23  ;R2减2月天数
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    16
+
+06E5 020981          983       LJMP Y2         ;不够减，判，R3为0否
+06E8                 984     M23:
+06E8 EA              985       MOV A,R2        ;不为0，R3加到R2中
+06E9 2B              986       ADD A,R3        ;再让二月减
+06EA FA              987       MOV R2,A        ;还不够，则转Y2
+06EB 7B00            988       MOV R3,#00H
+06ED C1CE            989       AJMP M2
+06EF                 990     MM2:
+06EF 120D03          991       LCALL CHECKRE   ;查2月，如果不为闰月
+06F2 B40223          992       CJNE A,#02H,M3  ;转3月
+06F5                 993     RM2:
+06F5 EC              994       MOV A,R4
+06F6 540F            995       ANL A,#0FH
+06F8 7007            996       JNZ RM21
+06FA EA              997       MOV A,R2
+06FB C3              998       CLR C
+06FC 941E            999       SUBB A,#30
+06FE F9             1000       MOV R1,A
+06FF E106           1001       AJMP RM22
+0701                1002     RM21:
+0701 EA             1003       MOV A,R2
+0702 C3             1004       CLR C
+0703 941D           1005       SUBB A,#29
+0705 F9             1006       MOV R1,A
+0706                1007     RM22:
+0706 4004           1008       JC RM23
+0708 E9             1009       MOV A,R1  ;R2减闰2月天数，够减
+0709 FA             1010       MOV R2,A   ;转3月
+070A E118           1011       AJMP M3
+070C                1012     RM23:
+070C BB0003         1013       CJNE R3,#00H,RM24 ;R2减闰2月天数
+070F 0209A5         1014       LJMP RY2          ;不够减，判，R3为0否
+0712                1015     RM24:
+0712 EA             1016       MOV A,R2          ;不为0，R3加到R2中
+0713 2B             1017       ADD A,R3          ;再让闰2月减
+0714 7B00           1018       MOV R3,#00H       ;还不够，则转RY2
+0716 C1F5           1019       AJMP RM2
+0718                1020     M3:
+0718 EA             1021       MOV A,R2       ;R2减3月天数
+0719 C3             1022       CLR C
+071A 941D           1023       SUBB A,#29
+071C F9             1024       MOV R1,A
+071D EE             1025       MOV A,R6
+071E 20E405         1026       JB ACC.4,M31
+0721 C3             1027       CLR C
+0722 EA             1028       MOV A,R2
+0723 941E           1029       SUBB A,#30
+0725 F9             1030       MOV R1,A
+0726                1031     M31:
+0726 4004           1032       JC M32
+0728 E9             1033       MOV A,R1    ;R2减3月天数，够减
+0729 FA             1034       MOV R2,A
+072A E139           1035       AJMP MM3
+072C                1036     M32:
+072C BB0003         1037       CJNE R3,#00H,M33  ;R2减3月天数
+072F 0209C9         1038       LJMP Y3           ;不够减，判，R3为0否
+0732                1039     M33:
+0732 EA             1040       MOV A,R2           ;不为0，R3加到R2中
+0733 2B             1041       ADD A,R3           ;再让3月减
+0734 FA             1042       MOV R2,A            ;还不够，则转Y3
+0735 7B00           1043       MOV R3,#00H
+0737 E118           1044       AJMP M3
+0739                1045     MM3:
+0739 120D03         1046       LCALL CHECKRE    ;查3月，如果不为闰月
+073C B40324         1047       CJNE A,#03H,M4   ;转4月
+073F                1048     RM3:
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    17
+
+073F EC             1049       MOV A,R4
+0740 540F           1050       ANL A,#0FH     ;R2减闰3月天数
+0742 7007           1051       JNZ RM31
+0744 EA             1052       MOV A,R2
+0745 C3             1053       CLR C
+0746 941E           1054       SUBB A,#30
+0748 F9             1055       MOV R1,A
+0749 E150           1056       AJMP RM32
+074B                1057     RM31:
+074B EA             1058       MOV A,R2
+074C C3             1059       CLR C
+074D 941D           1060       SUBB A,#29
+074F F9             1061       MOV R1,A
+0750                1062     RM32:
+0750 4004           1063       JC RM33
+0752 E9             1064       MOV A,R1  ;R2减闰3月天数，够减
+0753 FA             1065       MOV R2,A  ;转4月
+0754 E163           1066       AJMP M4
+0756                1067     RM33:
+0756 BB0003         1068       CJNE R3,#00H,RM34 ;R2减闰3月天数
+0759 020A0E         1069       LJMP RY3          ;不够减，判，R3为0否
+075C                1070     RM34:
+075C EA             1071       MOV A,R2          ;不为0，R3加到R2中
+075D 2B             1072       ADD A,R3            ;再让闰3月减
+075E FA             1073       MOV R2,A           ;还不够，则转RY3
+075F 7B00           1074       MOV R3,#00H
+0761 E13F           1075       AJMP RM3
+0763                1076     M4:
+0763 EA             1077       MOV A,R2
+0764 C3             1078       CLR C           ;R2减4月天数
+0765 941D           1079       SUBB A,#29
+0767 F9             1080       MOV R1,A
+0768 EE             1081       MOV A,R6
+0769 20E205         1082       JB ACC.2,M41
+076C C3             1083       CLR C
+076D EA             1084       MOV A,R2
+076E 941E           1085       SUBB A,#30
+0770 F9             1086       MOV R1,A
+0771                1087     M41:
+0771 4004           1088       JC M42
+0773 E9             1089       MOV A,R1   ;R2减4月天数，够减
+0774 FA             1090       MOV R2,A
+0775 E184           1091       AJMP MM4
+0777                1092     M42:
+0777 BB0003         1093       CJNE R3,#00H,M43  ;R2减4月天数
+077A 020A32         1094       LJMP Y4           ;不够减，判，R3为0否
+077D                1095     M43:
+077D EA             1096       MOV A,R2          ;不为0，R3加到R2中
+077E 2B             1097       ADD A,R3            ;再让4月减
+077F FA             1098       MOV R2,A           ;还不够，则转Y4
+0780 7B00           1099       MOV R3,#00H
+0782 E163           1100       AJMP M4
+0784                1101     MM4:
+0784 120D03         1102       LCALL CHECKRE ;查4月，如果不为闰月
+0787 B40424         1103       CJNE A,#04H,M5 ;转5月
+078A                1104     RM4:
+078A EC             1105       MOV A,R4
+078B 540F           1106       ANL A,#0FH    ;R2减闰4月天数
+078D 7007           1107       JNZ RM41
+078F EA             1108       MOV A,R2
+0790 C3             1109       CLR C
+0791 941E           1110       SUBB A,#30
+0793 F9             1111       MOV R1,A
+0794 E19B           1112       AJMP RM42
+0796                1113     RM41:
+0796 EA             1114       MOV A,R2
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    18
+
+0797 C3             1115       CLR C
+0798 941D           1116       SUBB A,#29
+079A F9             1117       MOV R1,A
+079B                1118     RM42:
+079B 4004           1119       JC RM43
+079D E9             1120       MOV A,R1   ;R2减闰4月天数，够减
+079E FA             1121       MOV R2,A   ;转5月
+079F E1AE           1122       AJMP M5
+07A1                1123     RM43:
+07A1 BB0003         1124       CJNE R3,#00H,RM44  ;R2减闰4月天数
+07A4 020A77         1125       LJMP RY4           ;不够减，判，R3为0否
+07A7                1126     RM44:
+07A7 EA             1127       MOV A,R2           ;不为0，R3加到R2中
+07A8 2B             1128       ADD A,R3           ;再让闰4月减
+07A9 FA             1129       MOV R2,A
+07AA 7B00           1130       MOV R3,#00H        ;还不够，则转Y4
+07AC E18A           1131       AJMP RM4
+07AE                1132     M5:
+07AE EA             1133       MOV A,R2        ;R2减5月天数
+07AF C3             1134       CLR C
+07B0 941D           1135       SUBB A,#29
+07B2 F9             1136       MOV R1,A
+07B3 EE             1137       MOV A,R6
+07B4 20E105         1138       JB ACC.1,M51
+07B7 EA             1139       MOV A,R2
+07B8 C3             1140       CLR C
+07B9 941E           1141       SUBB A,#30
+07BB F9             1142       MOV R1,A
+07BC                1143     M51:
+07BC 4004           1144       JC M52
+07BE E9             1145       MOV A,R1    ;R2减5月天数，够减
+07BF FA             1146       MOV R2,A
+07C0 E1D0           1147       AJMP MM5
+07C2                1148     M52:
+07C2 BB0003         1149       CJNE R3,#00H,M53   ;R2减5月天数
+07C5 020A9B         1150       LJMP Y5           ;不够减，判，R3为0否
+07C8                1151     M53:
+07C8 EA             1152       MOV A,R2          ;不为0，R3加到R2中
+07C9 2B             1153       ADD A,R3          ;再让5月减
+07CA FA             1154       MOV R2,A          ;还不够，则转Y5
+07CB 7B00           1155       MOV R3,#00H
+07CD 0207AE         1156       LJMP M5
+07D0                1157     MM5:
+07D0 120D03         1158       LCALL CHECKRE  ;查5月，如果不为闰月
+07D3 B40527         1159       CJNE A,#05H,M6  ;转6月
+07D6                1160     RM5:
+07D6 EC             1161       MOV A,R4       ;R2减闰5月天数
+07D7 540F           1162       ANL A,#0FH
+07D9 7008           1163       JNZ RM51
+07DB EA             1164       MOV A,R2
+07DC C3             1165       CLR C
+07DD 941E           1166       SUBB A,#30
+07DF F9             1167       MOV R1,A
+07E0 0207E8         1168       LJMP RM52
+07E3                1169     RM51:
+07E3 EA             1170       MOV A,R2
+07E4 C3             1171       CLR C
+07E5 941D           1172       SUBB A,#29
+07E7 F9             1173       MOV R1,A
+07E8                1174     RM52:
+07E8 4005           1175       JC RM53
+07EA E9             1176       MOV A,R1   ;R2减闰5月天数，够减
+07EB FA             1177       MOV R2,A   ;转6月
+07EC 0207FD         1178       LJMP M6
+07EF                1179     RM53:
+07EF BB0003         1180       CJNE R3,#00H,RM54   ;R2减闰5月天数
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    19
+
+07F2 020AE0         1181       LJMP RY5            ;不够减，判，R3为0否
+07F5                1182     RM54:
+07F5 EA             1183       MOV A,R2            ;不为0，R3加到R2中
+07F6 2B             1184       ADD A,R3            ;再让5月减
+07F7 FA             1185       MOV R2,A            ;还不够，则转RY5
+07F8 7B00           1186       MOV R3,#00H
+07FA 0207D6         1187       LJMP RM5
+07FD                1188     M6:
+07FD EA             1189       MOV A,R2        ;R2减6月天数
+07FE C3             1190       CLR C
+07FF 941D           1191       SUBB A,#29
+0801 F9             1192       MOV R1,A
+0802 EE             1193       MOV A,R6
+0803 20E005         1194       JB ACC.0,M61
+0806 EA             1195       MOV A,R2
+0807 C3             1196       CLR C
+0808 941E           1197       SUBB A,#30
+080A F9             1198       MOV R1,A
+080B                1199     M61:
+080B 4005           1200       JC M62
+080D E9             1201       MOV A,R1  ;R2减6月天数，够减
+080E FA             1202       MOV R2,A
+080F 020820         1203       LJMP MM6
+0812                1204     M62:
+0812 BB0003         1205       CJNE R3,#00H,M63   ;R2减6月天数
+0815 020B04         1206       LJMP Y6            ;不够减，判，R3为0否
+0818                1207     M63:
+0818 EA             1208       MOV A,R2           ;不为0，R3加到R2中
+0819 2B             1209       ADD A,R3           ;再让6月减
+081A FA             1210       MOV R2,A           ;还不够，则转Y6
+081B 7B00           1211       MOV R3,#00H
+081D 0207FD         1212       LJMP M6
+0820                1213     MM6:
+0820 120D03         1214       LCALL CHECKRE   ;查6月，如果不为闰月
+0823 B40627         1215       CJNE A,#06H,M7  ;转7月
+0826                1216     RM6:
+0826 EC             1217       MOV A,R4
+0827 540F           1218       ANL A,#0FH       ;R2减闰6月天数
+0829 7008           1219       JNZ RM61
+082B EA             1220       MOV A,R2
+082C C3             1221       CLR C
+082D 941E           1222       SUBB A,#30
+082F F9             1223       MOV R1,A
+0830 020838         1224       LJMP RM62
+0833                1225     RM61:
+0833 EA             1226       MOV A,R2
+0834 C3             1227       CLR C
+0835 941D           1228       SUBB A,#29
+0837 F9             1229       MOV R1,A
+0838                1230     RM62:
+0838 4005           1231       JC RM63
+083A E9             1232       MOV A,R1   ;R2减闰6月天数，够减
+083B FA             1233       MOV R2,A    ;转7月
+083C 02084D         1234       LJMP M7
+083F                1235     RM63:
+083F BB0003         1236       CJNE R3,#00H,RM64   ;R2减闰6月天数
+0842 020B49         1237       LJMP RY6            ;不够减，判，R3为0否
+0845                1238     RM64:
+0845 EA             1239       MOV A,R2            ;不为0，R3加到R2中
+0846 2B             1240       ADD A,R3            ;再让闰6月减
+0847 FA             1241       MOV R2,A            ;还不够，则转RY6
+0848 7B00           1242       MOV R3,#00H
+084A 020826         1243       LJMP RM6
+084D                1244     M7:
+084D EA             1245       MOV A,R2      ;R2减7月天数
+084E C3             1246       CLR C
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    20
+
+084F 941D           1247       SUBB A,#29
+0851 F9             1248       MOV R1,A
+0852 ED             1249       MOV A,R5
+0853 20E605         1250       JB ACC.6,M71
+0856 EA             1251       MOV A,R2
+0857 C3             1252       CLR C
+0858 941E           1253       SUBB A,#30
+085A F9             1254       MOV R1,A
+085B                1255     M71:
+085B 4005           1256       JC M72
+085D E9             1257       MOV A,R1  ;R2减7月天数，够减
+085E FA             1258       MOV R2,A
+085F 020870         1259       LJMP MM7
+0862                1260     M72:
+0862 BB0003         1261       CJNE R3,#00H,M73   ;R2减7月天数
+0865 020B6D         1262       LJMP Y7            ;不够减，判，R3为0否
+0868                1263     M73:
+0868 EA             1264       MOV A,R2           ;不为0，R3加到R2中
+0869 2B             1265       ADD A,R3           ;再让6月减
+086A FA             1266       MOV R2,A            ;还不够，则转Y7
+086B 7B00           1267       MOV R3,#00H
+086D 02084D         1268       LJMP M7
+0870                1269     MM7:
+0870 120D03         1270       LCALL CHECKRE ;查7月，如果不为闰月
+0873 B40727         1271       CJNE A,#07H,M8 ;转8月
+0876                1272     RM7:
+0876 EC             1273       MOV A,R4
+0877 540F           1274       ANL A,#0FH     ;R2减闰7月天数
+0879 7008           1275       JNZ RM71
+087B EA             1276       MOV A,R2
+087C C3             1277       CLR C
+087D 941E           1278       SUBB A,#30
+087F F9             1279       MOV R1,A
+0880 020888         1280       LJMP RM72
+0883                1281     RM71:
+0883 EA             1282       MOV A,R2
+0884 C3             1283       CLR C
+0885 941D           1284       SUBB A,#29
+0887 F9             1285       MOV R1,A
+0888                1286     RM72:
+0888 4005           1287       JC RM73
+088A E9             1288       MOV A,R1 ;R2减闰7月天数，够减
+088B FA             1289       MOV R2,A ;转8月
+088C 02089D         1290       LJMP M8
+088F                1291     RM73:
+088F BB0003         1292       CJNE R3,#00H,RM74  ;R2减闰7月天数
+0892 020BB2         1293       LJMP RY7           ;不够减，判，R3为0否
+0895                1294     RM74:
+0895 EA             1295       MOV A,R2           ;不为0，R3加到R2中
+0896 2B             1296       ADD A,R3           ;再让闰7月减
+0897 FA             1297       MOV R2,A            ;还不够，则转RY7
+0898 7B00           1298       MOV R3,#00H
+089A 020876         1299       LJMP RM7
+089D                1300     M8:
+089D EA             1301       MOV A,R2         ;R2减8月天数
+089E C3             1302       CLR C
+089F 941D           1303       SUBB A,#29
+08A1 F9             1304       MOV R1,A
+08A2 ED             1305       MOV A,R5
+08A3 20E505         1306       JB ACC.5,M81
+08A6 EA             1307       MOV A,R2
+08A7 C3             1308       CLR C
+08A8 941E           1309       SUBB A,#30
+08AA F9             1310       MOV R1,A
+08AB                1311     M81:
+08AB 4005           1312       JC M82
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    21
+
+08AD E9             1313       MOV A,R1   ;R2减8月天数，够减
+08AE FA             1314       MOV R2,A   ;转9月
+08AF 0208C0         1315       LJMP M9
+08B2                1316     M82:
+08B2 BB0003         1317       CJNE R3,#00H,M83   ;R2减8月天数
+08B5 020BD6         1318       LJMP Y8            ;不够减，判，R3为0否
+08B8                1319     M83:
+08B8 EA             1320       MOV A,R2           ;不为0，R3加到R2中
+08B9 2B             1321       ADD A,R3            ;再让8月减
+08BA FA             1322       MOV R2,A            ;还不够，则转Y8
+08BB 7B00           1323       MOV R3,#00H
+08BD 02089D         1324       LJMP M8
+08C0                1325     M9:
+08C0 EA             1326       MOV A,R2      ;R2减9月天数
+08C1 C3             1327       CLR C
+08C2 941D           1328       SUBB A,#29
+08C4 F9             1329       MOV R1,A
+08C5 ED             1330       MOV A,R5
+08C6 20E405         1331       JB ACC.4,M91
+08C9 EA             1332       MOV A,R2
+08CA C3             1333       CLR C
+08CB 941E           1334       SUBB A,#30
+08CD F9             1335       MOV R1,A
+08CE                1336     M91:
+08CE 4005           1337       JC M92
+08D0 E9             1338       MOV A,R1   ;R2减9月天数，够减
+08D1 FA             1339       MOV R2,A
+08D2 0208E3         1340       LJMP MM9
+08D5                1341     M92:
+08D5 BB0003         1342       CJNE R3,#00H,M93   ;R2减9月天数
+08D8 020C1B         1343       LJMP Y9            ;不够减，判，R3为0否
+08DB                1344     M93:
+08DB EA             1345       MOV A,R2           ;不为0，R3加到R2中
+08DC 2B             1346       ADD A,R3           ;再让9月减
+08DD FA             1347       MOV R2,A            ;还不够，则转Y9
+08DE 7B00           1348       MOV R3,#00H
+08E0 0208C0         1349       LJMP M9
+08E3                1350     MM9:
+08E3 120D03         1351       LCALL CHECKRE  ;查9月，如果不为闰月
+08E6 B40927         1352       CJNE A,#09H,M10  ;转10月
+08E9                1353     RM9:
+08E9 EC             1354       MOV A,R4         ;R2减闰9月天数
+08EA 540F           1355       ANL A,#0FH
+08EC 7008           1356       JNZ RM91
+08EE EA             1357       MOV A,R2
+08EF C3             1358       CLR C
+08F0 941E           1359       SUBB A,#30
+08F2 F9             1360       MOV R1,A
+08F3 0208FB         1361       LJMP RM92
+08F6                1362     RM91:
+08F6 EA             1363       MOV A,R2
+08F7 C3             1364       CLR C
+08F8 941D           1365       SUBB A,#29
+08FA F9             1366       MOV R1,A
+08FB                1367     RM92:
+08FB 4005           1368       JC RM93
+08FD E9             1369       MOV A,R1  ;R2减闰9月天数，够减
+08FE FA             1370       MOV R2,A  ;转10月
+08FF 020910         1371       LJMP M10
+0902                1372     RM93:
+0902 BB0003         1373       CJNE R3,#00H,RM94  ;R2减闰9月天数
+0905 020C3F         1374       LJMP RY9           ;不够减，判，R3为0否
+0908                1375     RM94:
+0908 EA             1376       MOV A,R2           ;不为0，R3加到R2中
+0909 2B             1377       ADD A,R3           ;再让闰9月减
+090A FA             1378       MOV R2,A           ;还不够，则转RY9
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    22
+
+090B 7B00           1379       MOV R3,#00H
+090D 0208E9         1380       LJMP RM9
+0910                1381     M10:
+0910 EA             1382       MOV A,R2       ;R2减10月天数
+0911 C3             1383       CLR C
+0912 941D           1384       SUBB A,#29
+0914 F9             1385       MOV R1,A
+0915 ED             1386       MOV A,R5
+0916 20E205         1387       JB ACC.2,M101
+0919 EA             1388       MOV A,R2
+091A C3             1389       CLR C
+091B 941E           1390       SUBB A,#30
+091D F9             1391       MOV R1,A
+091E                1392     M101:
+091E 4005           1393       JC M102
+0920 E9             1394       MOV A,R1  ;R2减10月天数，够减
+0921 FA             1395       MOV R2,A  ;转11月
+0922 020933         1396       LJMP M11
+0925                1397     M102:
+0925 BB0003         1398       CJNE R3,#00H,M103     ;R2减10月天数
+0928 020C63         1399       LJMP Y10              ;不够减，判，R3为0否
+092B                1400     M103:
+092B EA             1401       MOV A,R2              ;不为0，R3加到R2中
+092C 2B             1402       ADD A,R3              ;再让10月减
+092D FA             1403       MOV R2,A              ;还不够，则转Y10
+092E 7B00           1404       MOV R3,#00H
+0930 020910         1405       LJMP M10
+0933                1406     M11:
+0933 EA             1407       MOV A,R2          ;R2减11月天数
+0934 C3             1408       CLR C
+0935 941D           1409       SUBB A,#29
+0937 F9             1410       MOV R1,A
+0938 ED             1411       MOV A,R5
+0939 20E105         1412       JB ACC.1,M111
+093C EA             1413       MOV A,R2
+093D C3             1414       CLR C
+093E 941E           1415       SUBB A,#30
+0940 F9             1416       MOV R1,A
+0941                1417     M111:
+0941 4005           1418       JC M112
+0943 E9             1419       MOV A,R1  ;R2减11月天数，够减
+0944 FA             1420       MOV R2,A  ;转12月
+0945 020956         1421       LJMP M12
+0948                1422     M112:
+0948 BB0003         1423       CJNE R3,#00H,M113   ;R2减11月天数
+094B 020CA8         1424       LJMP Y11            ;不够减，判，R3为0否
+094E                1425     M113:
+094E EA             1426       MOV A,R2            ;不为0，R3加到R2中
+094F 2B             1427       ADD A,R3            ;再让11月减
+0950 FA             1428       MOV R2,A            ;还不够，则转Y11
+0951 7B00           1429       MOV R3,#00H
+0953 020933         1430       LJMP M11
+0956                1431     M12:
+0956 EA             1432       MOV A,R2      ;R2减12月天数
+0957 C3             1433       CLR C
+0958 941D           1434       SUBB A,#29
+095A F9             1435       MOV R1,A
+095B ED             1436       MOV A,R5
+095C 20E005         1437       JB ACC.0,M121
+095F C3             1438       CLR C
+0960 EA             1439       MOV A,R2
+0961 941E           1440       SUBB A,#30
+0963 F9             1441       MOV R1,A
+0964                1442     M121:
+0964 BB0003         1443       CJNE R3,#00H,M122  ;R2减12月天数
+0967 020CCC         1444       LJMP Y12           ;不够减，判，R3为0否
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    23
+
+096A                1445     M122:
+096A EA             1446       MOV A,R2           ;不为0，R3加到R2中
+096B 2B             1447       ADD A,R3           ;再让12月减
+096C FA             1448       MOV R2,A           ;还不够，则转Y12
+096D 7B00           1449       MOV R3,#00H
+096F 020956         1450       LJMP M12
+0972                1451     Y1:
+0972 EA             1452       MOV A,R2
+0973 F8             1453       MOV R0,A       ;R2中为日的值
+0974 120D08         1454       LCALL D_BCD
+0977 F556           1455       MOV 56H,A
+0979 755701         1456       MOV 57H,#01H
+097C C2D5           1457       CLR F0    ;非闰月
+097E 020CF0         1458       LJMP S_PLAY
+0981                1459     Y2:
+0981 BA0012         1460       CJNE R2,#00H,Y21
+0984 EE             1461       MOV A,R6      ;R2中为0，则为前一个月
+0985 755629         1462       MOV 56H,#29H  ;的的最后一天
+0988 20E603         1463       JB ACC.6,Y22
+098B 755630         1464       MOV 56H,#30H
+098E                1465     Y22:
+098E 755701         1466       MOV 57H,#01H
+0991 C2D5           1467       CLR F0
+0993 020CF0         1468       LJMP S_PLAY
+0996                1469     Y21:
+0996 EA             1470       MOV A,R2
+0997 F8             1471       MOV R0,A     ;R2中为日的值
+0998 120D08         1472       LCALL D_BCD
+099B F556           1473       MOV 56H,A
+099D 755702         1474       MOV 57H,#02H
+09A0 C2D5           1475       CLR F0
+09A2 020CF0         1476       LJMP S_PLAY
+09A5                1477     RY2:
+09A5 BA0012         1478       CJNE R2,#00H,RY21
+09A8 755629         1479       MOV 56H,#29H  ;R2中为0，则为前一个月
+09AB EE             1480       MOV A,R6      ;的的最后一天
+09AC 20E503         1481       JB ACC.5,RY22
+09AF 755630         1482       MOV 56H,#30H
+09B2                1483     RY22:
+09B2 755702         1484       MOV 57H,#02H
+09B5 C2D5           1485       CLR F0
+09B7 020CF0         1486       LJMP S_PLAY
+09BA                1487     RY21:
+09BA EA             1488       MOV A,R2     ;R2中为日的值
+09BB F8             1489       MOV R0,A
+09BC 120D08         1490       LCALL D_BCD
+09BF F556           1491       MOV 56H,A
+09C1 755702         1492       MOV 57H,#02H
+09C4 D2D5           1493       SETB F0    ;闰月
+09C6 020CF0         1494       LJMP S_PLAY
+09C9                1495     Y3:
+09C9 BA0033         1496       CJNE R2,#00H,Y31
+09CC 120D03         1497       LCALL CHECKRE     ;查前一个月是否为闰月
+09CF B4021B         1498       CJNE A,#02H,Y32
+09D2 755629         1499       MOV 56H,#29H      ;前一个月是闰月
+09D5 EC             1500       MOV A,R4
+09D6 540F           1501       ANL A,#0FH         ;R2中为0，则为前一个月
+09D8 700B           1502       JNZ Y33            ;的的最后一天
+09DA 755630         1503       MOV 56H,#30H
+09DD 755702         1504       MOV 57H,#02H
+09E0 D2D5           1505       SETB F0
+09E2 020CF0         1506       LJMP S_PLAY
+09E5                1507     Y33:
+09E5 755702         1508       MOV 57H,#02H
+09E8 D2D5           1509       SETB F0
+09EA 020CF0         1510       LJMP S_PLAY
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    24
+
+09ED                1511     Y32:
+09ED 755629         1512       MOV 56H,#29H  ;前一个月不是闰月
+09F0 EE             1513       MOV A,R6
+09F1 20E503         1514       JB ACC.5,Y34
+09F4 755630         1515       MOV 56H,#30H
+09F7                1516     Y34:
+09F7 755702         1517       MOV 57H,#02H
+09FA C2D5           1518       CLR F0
+09FC 020CF0         1519       LJMP S_PLAY
+09FF                1520     Y31:
+09FF EA             1521       MOV A,R2
+0A00 F8             1522       MOV R0,A      ;R2中为日的值
+0A01 120D08         1523       LCALL D_BCD
+0A04 F556           1524       MOV 56H,A
+0A06 755703         1525       MOV 57H,#03H
+0A09 C2D5           1526       CLR F0
+0A0B 020CF0         1527       LJMP S_PLAY
+0A0E                1528     RY3:
+0A0E BA0012         1529       CJNE R2,#00H,RY31
+0A11 755629         1530       MOV 56H,#29H
+0A14 EE             1531       MOV A,R6
+0A15 20E403         1532       JB ACC.4,RY32   ;R2中为0，则为前一个月
+0A18 755630         1533       MOV 56H,#30H    ;的的最后一天
+0A1B                1534     RY32:
+0A1B 755703         1535       MOV 57H,#03H
+0A1E C2D5           1536       CLR F0
+0A20 020CF0         1537       LJMP S_PLAY
+0A23                1538     RY31:
+0A23 EA             1539       MOV A,R2       ;R2中为日的值
+0A24 F8             1540       MOV R0,A
+0A25 120D08         1541       LCALL D_BCD
+0A28 F556           1542       MOV 56H,A
+0A2A 755703         1543       MOV 57H,#03H
+0A2D D2D5           1544       SETB F0
+0A2F 020CF0         1545       LJMP S_PLAY
+0A32                1546     Y4:
+0A32 BA0033         1547       CJNE R2,#00H,Y41
+0A35 120D03         1548       LCALL CHECKRE    ;查前一个月是否为闰月
+0A38 B4031B         1549       CJNE A,#03H,Y42
+0A3B 755629         1550       MOV 56H,#29H     ;前一个月是闰月
+0A3E EC             1551       MOV A,R4         ;R2中为0，则为前一个月
+0A3F 540F           1552       ANL A,#0FH       ;的最后一天
+0A41 700B           1553       JNZ Y43
+0A43 755630         1554       MOV 56H,#30H
+0A46 755703         1555       MOV 57H,#03H
+0A49 D2D5           1556       SETB F0
+0A4B 020CF0         1557       LJMP S_PLAY
+0A4E                1558     Y43:
+0A4E 755703         1559       MOV 57H,#03H
+0A51 D2D5           1560       SETB F0
+0A53 020CF0         1561       LJMP S_PLAY
+0A56                1562     Y42:
+0A56 755629         1563       MOV 56H,#29H  ;前一个月不是闰月
+0A59 EE             1564       MOV A,R6
+0A5A 20E403         1565       JB ACC.4,Y44
+0A5D 755630         1566       MOV 56H,#30H
+0A60                1567     Y44:
+0A60 755703         1568       MOV 57H,#03H
+0A63 C2D5           1569       CLR F0
+0A65 020CF0         1570       LJMP S_PLAY
+0A68                1571     Y41:
+0A68 EA             1572       MOV A,R2       ;R2中为日的值
+0A69 F8             1573       MOV R0,A
+0A6A 120D08         1574       LCALL D_BCD
+0A6D F556           1575       MOV 56H,A
+0A6F 755704         1576       MOV 57H,#04H
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    25
+
+0A72 C2D5           1577       CLR F0
+0A74 020CF0         1578       LJMP S_PLAY
+0A77                1579     RY4:
+0A77 BA0012         1580       CJNE R2,#00H,RY41
+0A7A 755629         1581       MOV 56H,#29H    ;R2中为0，则为前一个月
+0A7D EE             1582       MOV A,R6        ;的的最后一天
+0A7E 20E203         1583       JB ACC.2,RY42
+0A81 755630         1584       MOV 56H,#30H
+0A84                1585     RY42:
+0A84 755704         1586       MOV 57H,#04H
+0A87 C2D5           1587       CLR F0
+0A89 020CF0         1588       LJMP S_PLAY
+0A8C                1589     RY41:
+0A8C EA             1590       MOV A,R2       ;R2中为日的值
+0A8D F8             1591       MOV R0,A
+0A8E 120D08         1592       LCALL D_BCD
+0A91 F556           1593       MOV 56H,A
+0A93 755704         1594       MOV 57H,#04H
+0A96 D2D5           1595       SETB F0
+0A98 020CF0         1596       LJMP S_PLAY
+0A9B                1597     Y5:
+0A9B BA0033         1598       CJNE R2,#00H,Y51
+0A9E 120D03         1599       LCALL CHECKRE    ;查前一个月是否为闰月
+0AA1 B4041B         1600       CJNE A,#04H,Y52
+0AA4 755629         1601       MOV 56H,#29H       ;前一个月是闰月
+0AA7 EC             1602       MOV A,R4           ;R2中为0，则为前一个月
+0AA8 540F           1603       ANL A,#0FH         ;的最后一天
+0AAA 700B           1604       JNZ Y53
+0AAC 755630         1605       MOV 56H,#30H
+0AAF 755704         1606       MOV 57H,#04H
+0AB2 D2D5           1607       SETB F0
+0AB4 020CF0         1608       LJMP S_PLAY
+0AB7                1609     Y53:
+0AB7 755704         1610       MOV 57H,#04H
+0ABA D2D5           1611       SETB F0
+0ABC 020CF0         1612       LJMP S_PLAY
+0ABF                1613     Y52:
+0ABF 755629         1614       MOV 56H,#29H   ;前一个月不是闰月
+0AC2 EE             1615       MOV A,R6
+0AC3 20E203         1616       JB ACC.2,Y54
+0AC6 755630         1617       MOV 56H,#30H
+0AC9                1618     Y54:
+0AC9 755704         1619       MOV 57H,#04H
+0ACC C2D5           1620       CLR F0
+0ACE 020CF0         1621       LJMP S_PLAY
+0AD1                1622     Y51:
+0AD1 EA             1623       MOV A,R2       ;R2中为日的值
+0AD2 F8             1624       MOV R0,A
+0AD3 120D08         1625       LCALL D_BCD
+0AD6 F556           1626       MOV 56H,A
+0AD8 755705         1627       MOV 57H,#05H
+0ADB C2D5           1628       CLR F0
+0ADD 020CF0         1629       LJMP S_PLAY
+0AE0                1630     RY5:
+0AE0 BA0012         1631       CJNE R2,#00H,RY51
+0AE3 755629         1632       MOV 56H,#29H    ;R2中为0，则为前一个月
+0AE6 EE             1633       MOV A,R6        ;的最后一天
+0AE7 20E103         1634       JB ACC.1,RY52
+0AEA 755630         1635       MOV 56H,#30H
+0AED                1636     RY52:
+0AED 755705         1637       MOV 57H,#05H
+0AF0 C2D5           1638       CLR F0
+0AF2 020CF0         1639       LJMP S_PLAY
+0AF5                1640     RY51:
+0AF5 EA             1641       MOV A,R2     ;R2中为日的值
+0AF6 F8             1642       MOV R0,A
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    26
+
+0AF7 120D08         1643       LCALL D_BCD
+0AFA F556           1644       MOV 56H,A
+0AFC 755705         1645       MOV 57H,#05H
+0AFF D2D5           1646       SETB F0
+0B01 020CF0         1647       LJMP S_PLAY
+0B04                1648     Y6:
+0B04 BA0033         1649       CJNE R2,#00H,Y61
+0B07 120D03         1650       LCALL CHECKRE   ;查前一个月是否为闰月
+0B0A B4051B         1651       CJNE A,#05H,Y62
+0B0D 755629         1652       MOV 56H,#29H    ;前一个月是闰月
+0B10 EC             1653       MOV A,R4        ;R2中为0，则为前一个月
+0B11 540F           1654       ANL A,#0FH      ;的最后一天
+0B13 700B           1655       JNZ Y63
+0B15 755630         1656       MOV 56H,#30H
+0B18 755705         1657       MOV 57H,#05H
+0B1B D2D5           1658       SETB F0
+0B1D 020CF0         1659       LJMP S_PLAY
+0B20                1660     Y63:
+0B20 755705         1661       MOV 57H,#05H
+0B23 D2D5           1662       SETB F0
+0B25 020CF0         1663       LJMP S_PLAY
+0B28                1664     Y62:
+0B28 755629         1665       MOV 56H,#29H   ;前一个月不是闰月
+0B2B EE             1666       MOV A,R6
+0B2C 20E103         1667       JB ACC.1,Y64
+0B2F 755630         1668       MOV 56H,#30H
+0B32                1669     Y64:
+0B32 755705         1670       MOV 57H,#05H
+0B35 C2D5           1671       CLR F0
+0B37 020CF0         1672       LJMP S_PLAY
+0B3A                1673     Y61:
+0B3A EA             1674       MOV A,R2        ;R2中为日的值
+0B3B F8             1675       MOV R0,A
+0B3C 120D08         1676       LCALL D_BCD
+0B3F F556           1677       MOV 56H,A
+0B41 755706         1678       MOV 57H,#06H
+0B44 C2D5           1679       CLR F0
+0B46 020CF0         1680       LJMP S_PLAY
+0B49                1681     RY6:
+0B49 BA0012         1682       CJNE R2,#00H,RY61
+0B4C 755629         1683       MOV 56H,#29H    ;R2中为0，则为前一个月
+0B4F EE             1684       MOV A,R6        ;的最后一天
+0B50 20E003         1685       JB ACC.0,RY62
+0B53 755630         1686       MOV 56H,#30H
+0B56                1687     RY62:
+0B56 755706         1688       MOV 57H,#06H
+0B59 C2D5           1689       CLR F0
+0B5B 020CF0         1690       LJMP S_PLAY
+0B5E                1691     RY61:
+0B5E EA             1692       MOV A,R2     ;R2中为日的值
+0B5F F8             1693       MOV R0,A
+0B60 120D08         1694       LCALL D_BCD
+0B63 F556           1695       MOV 56H,A
+0B65 755706         1696       MOV 57H,#06H
+0B68 D2D5           1697       SETB F0
+0B6A 020CF0         1698       LJMP S_PLAY
+0B6D                1699     Y7:
+0B6D BA0033         1700       CJNE R2,#00H,Y71
+0B70 120D03         1701       LCALL CHECKRE    ;查前一个月是否为闰月
+0B73 B4061B         1702       CJNE A,#06H,Y72
+0B76 755629         1703       MOV 56H,#29H     ;前一个月是闰月
+0B79 EC             1704       MOV A,R4         ;R2中为0，则为前一个月
+0B7A 540F           1705       ANL A,#0FH       ;的最后一天
+0B7C 700B           1706       JNZ Y73
+0B7E 755630         1707       MOV 56H,#30H
+0B81 755706         1708       MOV 57H,#06H
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    27
+
+0B84 D2D5           1709       SETB F0
+0B86 020CF0         1710       LJMP S_pLAY
+0B89                1711     Y73:
+0B89 755706         1712       MOV 57H,#06H
+0B8C D2D5           1713       SETB F0
+0B8E 020CF0         1714       LJMP S_PLAY
+0B91                1715     Y72:
+0B91 755629         1716       MOV 56H,#29H   ;前一个月不是闰月
+0B94 EE             1717       MOV A,R6
+0B95 20E003         1718       JB ACC.0,Y74
+0B98 755630         1719       MOV 56H,#30H
+0B9B                1720     Y74:
+0B9B 755706         1721       MOV 57H,#06H
+0B9E C2D5           1722       CLR F0
+0BA0 020CF0         1723       LJMP S_PLAY
+0BA3                1724     Y71:
+0BA3 EA             1725       MOV A,R2        ;R2中为日的值
+0BA4 F8             1726       MOV R0,A
+0BA5 120D08         1727       LCALL D_BCD
+0BA8 F556           1728       MOV 56H,A
+0BAA 755707         1729       MOV 57H,#07H
+0BAD C2D5           1730       CLR F0
+0BAF 020CF0         1731       LJMP S_PLAY
+0BB2                1732     RY7:
+0BB2 BA0012         1733       CJNE R2,#00H,RY71
+0BB5 755629         1734       MOV 56H,#29H    ;R2中为0，则为前一个月
+0BB8 ED             1735       MOV A,R5        ;的最后一天
+0BB9 20E603         1736       JB ACC.6,RY72
+0BBC 755630         1737       MOV 56H,#30H
+0BBF                1738     RY72:
+0BBF 755707         1739       MOV 57H,#07H
+0BC2 C2D5           1740       CLR F0
+0BC4 020CF0         1741       LJMP S_PLAY
+0BC7                1742     RY71:
+0BC7 EA             1743       MOV A,R2      ;R2中为日的值
+0BC8 F8             1744       MOV R0,A
+0BC9 120D08         1745       LCALL D_BCD
+0BCC F556           1746       MOV 56H,A
+0BCE 755707         1747       MOV 57H,#07H
+0BD1 D2D5           1748       SETB F0
+0BD3 020CF0         1749       LJMP S_PLAY
+0BD6                1750     Y8:
+0BD6 BA0033         1751       CJNE R2,#00H,Y81
+0BD9 120D03         1752       LCALL CHECKRE     ;查前一个月是否为闰月
+0BDC B4071B         1753       CJNE A,#07H,Y82
+0BDF 755629         1754       MOV 56H,#29H     ;前一个月是闰月
+0BE2 EC             1755       MOV A,R4         ;R2中为0，则为前一个月
+0BE3 540F           1756       ANL A,#0FH       ;的最后一天
+0BE5 700B           1757       JNZ Y83
+0BE7 755630         1758       MOV 56H,#30H
+0BEA 755707         1759       MOV 57H,#07H
+0BED D2D5           1760       SETB F0
+0BEF 020CF0         1761       LJMP S_PLAY
+0BF2                1762     Y83:
+0BF2 755707         1763       MOV 57H,#07H
+0BF5 D2D5           1764       SETB F0
+0BF7 020CF0         1765       LJMP S_PLAY
+0BFA                1766     Y82:
+0BFA 755629         1767       MOV 56H,#29H  ;前一个月不是闰月
+0BFD ED             1768       MOV A,R5
+0BFE 20E603         1769       JB ACC.6,Y84
+0C01 755630         1770       MOV 56H,#30H
+0C04                1771     Y84:
+0C04 755707         1772       MOV 57H,#07H
+0C07 C2D5           1773       CLR F0
+0C09 020CF0         1774       LJMP S_PLAY
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    28
+
+0C0C                1775     Y81:
+0C0C EA             1776       MOV A,R2     ;R2中为日的值
+0C0D F8             1777       MOV R0,A
+0C0E 120D08         1778       LCALL D_BCD
+0C11 F556           1779       MOV 56H,A
+0C13 755708         1780       MOV 57H,#08H
+0C16 C2D5           1781       CLR F0
+0C18 020CF0         1782       LJMP S_PLAY
+0C1B                1783     Y9:
+0C1B BA0012         1784       CJNE R2,#00H,Y91
+0C1E 755629         1785       MOV 56H,#29H   ;R2中为0，则为前一个月
+0C21 ED             1786       MOV A,R5       ;的最后一天
+0C22 20E503         1787       JB ACC.5,Y92
+0C25 755630         1788       MOV 56H,#30H
+0C28                1789     Y92:
+0C28 755708         1790       MOV 57H,#08H
+0C2B C2D5           1791       CLR F0
+0C2D 020CF0         1792       LJMP S_PLAY
+0C30                1793     Y91:
+0C30 EA             1794       MOV A,R2     ;R2中为日的值
+0C31 F8             1795       MOV R0,A
+0C32 120D08         1796       LCALL D_BCD
+0C35 F556           1797       MOV 56H,A
+0C37 755709         1798       MOV 57H,#09H
+0C3A C2D5           1799       CLR F0
+0C3C 020CF0         1800       LJMP S_PLAY
+0C3F                1801     RY9:
+0C3F BA0012         1802       CJNE R2,#00H,RY91
+0C42 755629         1803       MOV 56H,#29H    ;R2中为0，则为前一个月
+0C45 ED             1804       MOV A,R5        ;的最后一天
+0C46 20E403         1805       JB ACC.4,RY92
+0C49 755630         1806       MOV 56H,#30H
+0C4C                1807     RY92:
+0C4C 755709         1808       MOV 57H,#09H
+0C4F C2D5           1809       CLR F0
+0C51 020CF0         1810       LJMP S_PLAY
+0C54                1811     RY91:
+0C54 EA             1812       MOV A,R2      ;R2中为日的值
+0C55 F8             1813       MOV R0,A
+0C56 120D08         1814       LCALL D_BCD
+0C59 F556           1815       MOV 56H,A
+0C5B 755709         1816       MOV 57H,#09H
+0C5E D2D5           1817       SETB F0
+0C60 020CF0         1818       LJMP S_PLAY
+0C63                1819     Y10:
+0C63 BA0033         1820       CJNE R2,#00H,Y101
+0C66 120D03         1821       LCALL CHECKRE    ;查前一个月是否为闰月
+0C69 B4091B         1822       CJNE A,#09H,Y102
+0C6C 755629         1823       MOV 56H,#29H     ;前一个月是闰月
+0C6F EC             1824       MOV A,R4         ;R2中为0，则为前一个月
+0C70 540F           1825       ANL A,#0FH       ;的最后一天
+0C72 700B           1826       JNZ Y103
+0C74 755630         1827       MOV 56H,#30H
+0C77 755709         1828       MOV 57H,#09H
+0C7A D2D5           1829       SETB F0
+0C7C 020CF0         1830       LJMP S_PLAY
+0C7F                1831     Y103:
+0C7F 755709         1832       MOV 57H,#09H
+0C82 D2D5           1833       SETB F0
+0C84 020CF0         1834       LJMP S_PLAY
+0C87                1835     Y102:
+0C87 755629         1836       MOV 56H,#29H    ;前一个月不是闰月
+0C8A ED             1837       MOV A,R5
+0C8B 20E403         1838       JB ACC.4,Y104
+0C8E 755630         1839       MOV 56H,#30H
+0C91                1840     Y104:
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    29
+
+0C91 755709         1841       MOV 57H,#09H
+0C94 C2D5           1842       CLR F0
+0C96 020CF0         1843       LJMP S_PLAY
+0C99                1844     Y101:
+0C99 EA             1845       MOV A,R2       ;R2中为日的值
+0C9A F8             1846       MOV R0,A
+0C9B 120D08         1847       LCALL D_BCD
+0C9E F556           1848       MOV 56H,A
+0CA0 755710         1849       MOV 57H,#10H
+0CA3 C2D5           1850       CLR F0
+0CA5 020CF0         1851       LJMP S_PLAY
+0CA8                1852     Y11:
+0CA8 BA0012         1853       CJNE R2,#00H,Y111
+0CAB 755629         1854       MOV 56H,#29H     ;R2中为0，则为前一个月
+0CAE ED             1855       MOV A,R5         ;的最后一天
+0CAF 20E203         1856       JB ACC.2,Y112
+0CB2 755630         1857       MOV 56H,#30H
+0CB5                1858     Y112:
+0CB5 755710         1859       MOV 57H,#10H
+0CB8 C2D5           1860       CLR F0
+0CBA 020CF0         1861       LJMP S_PLAY
+0CBD                1862     Y111:
+0CBD EA             1863       MOV A,R2    ;R2中为日的值
+0CBE F8             1864       MOV R0,A
+0CBF 120D08         1865       LCALL D_BCD
+0CC2 F556           1866       MOV 56H,A
+0CC4 755711         1867       MOV 57H,#11H
+0CC7 C2D5           1868       CLR F0
+0CC9 020CF0         1869       LJMP S_PLAY
+0CCC                1870     Y12:
+0CCC BA0012         1871       CJNE R2,#00H,Y121
+0CCF 755629         1872       MOV 56H,#29H     ;R2中为0，则为前一个月
+0CD2 ED             1873       MOV A,R5          ;的最后一天
+0CD3 20E103         1874       JB ACC.1,Y122
+0CD6 755630         1875       MOV 56H,#30H
+0CD9                1876     Y122:
+0CD9 755711         1877       MOV 57H,#11H
+0CDC C2D5           1878       CLR F0
+0CDE 020CF0         1879       LJMP S_PLAY
+0CE1                1880     Y121:
+0CE1 EA             1881       MOV A,R2    ;R2中为日的值
+0CE2 F8             1882       MOV R0,A
+0CE3 120D08         1883       LCALL D_BCD
+0CE6 F556           1884       MOV 56H,A
+0CE8 755712         1885       MOV 57H,#12H
+0CEB C2D5           1886       CLR F0
+0CED 020CF0         1887       LJMP S_PLAY
+0CF0                1888     S_PLAY:
+0CF0 A857           1889       MOV R0,57H
+0CF2 12047F         1890       LCALL DIVIDE  ;月分离送显示缓存
+0CF5 8952           1891       MOV 52H,R1
+0CF7 8A53           1892       MOV 53H,R2
+0CF9 A856           1893       MOV R0,56H
+0CFB 12047F         1894       LCALL DIVIDE  ;日分离送显示缓存
+0CFE 8950           1895       MOV 50H,R1
+0D00 8A51           1896       MOV 51H,R2
+0D02 22             1897       RET
+                    1898     
+                    1899     ;查是否闰月程序;;
+                    1900     
+0D03                1901     CHECKRE:
+0D03 EC             1902       MOV A,R4
+0D04 C4             1903       SWAP A
+0D05 540F           1904       ANL A,#0FH
+0D07 22             1905       RET
+                    1906     ;10进制转换为BCD码程序;
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    30
+
+                    1907     
+0D08                1908     D_BCD:
+0D08 E8             1909       MOV A,R0
+0D09 75F00A         1910       MOV B,#10
+0D0C 84             1911       DIV AB
+0D0D C4             1912       SWAP A
+0D0E 45F0           1913       ORL A,B
+0D10 22             1914       RET
+                    1915     
+                    1916     ;~~~~~闹铃~~~~~~~~~~~~~~
+0D11                1917     NS:
+0D11 E575           1918       MOV A,75H
+0D13 C4             1919       SWAP A
+0D14 2574           1920       ADD A,74H
+0D16 F512           1921       MOV 12H,A
+0D18 E573           1922       MOV A,73H
+0D1A C4             1923       SWAP A
+0D1B 2572           1924       ADD A,72H
+0D1D F513           1925       MOV 13H,A
+0D1F E571           1926       MOV A,71H
+0D21 C4             1927       SWAP A
+0D22 2570           1928       ADD A,70H
+0D24 F514           1929       MOV 14H,A
+0D26                1930     SH1:
+0D26 E512           1931       MOV A,12H
+0D28 B40710         1932       CJNE A,#07H,XH1
+0D2B E513           1933       MOV A,13H
+0D2D B4500B         1934       CJNE A,#50H,XH1
+0D30 E514           1935       MOV A,14H
+0D32 B40006         1936       CJNE A,#00H,XH1
+0D35 D286           1937       SETB P0.6
+0D37 120E86         1938       LCALL MPD
+0D3A 22             1939       RET
+0D3B                1940     XH1:
+0D3B C286           1941       CLR P0.6
+0D3D E512           1942       MOV A,12H
+0D3F B40810         1943       CJNE A,#08H,SH2
+0D42 E513           1944       MOV A,13H
+0D44 B4300B         1945       CJNE A,#30H,SH2
+0D47 E514           1946       MOV A,14H
+0D49 B40006         1947       CJNE A,#00H,SH2
+0D4C D286           1948       SETB P0.6
+0D4E 120E86         1949       LCALL MPD
+0D51 22             1950       RET
+0D52                1951     SH2:
+0D52 E512           1952       MOV A,12H
+0D54 B40810         1953       CJNE A,#08H,XH2
+0D57 E513           1954       MOV A,13H
+0D59 B4400B         1955       CJNE A,#40H,XH2
+0D5C E514           1956       MOV A,14H
+0D5E B40006         1957       CJNE A,#00H,XH2
+0D61 D286           1958       SETB P0.6
+0D63 120E86         1959       LCALL MPD
+0D66 22             1960       RET
+0D67                1961     XH2:
+0D67 C286           1962       CLR P0.6
+0D69 E512           1963       MOV A,12H
+0D6B B40910         1964       CJNE A,#09H,SH3
+0D6E E513           1965       MOV A,13H
+0D70 B4200B         1966       CJNE A,#20H,SH3
+0D73 E514           1967       MOV A,14H
+0D75 B40006         1968       CJNE A,#00H,SH3
+0D78 D286           1969       SETB P0.6
+0D7A 120E86         1970       LCALL MPD
+0D7D 22             1971       RET
+0D7E                1972     SH3:
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    31
+
+0D7E E512           1973       MOV A,12H
+0D80 B40910         1974       CJNE A,#09H,XH3
+0D83 E513           1975       MOV A,13H
+0D85 B4400B         1976       CJNE A,#40H,XH3
+0D88 E514           1977       MOV A,14H
+0D8A B40006         1978       CJNE A,#00H,XH3
+0D8D D286           1979       SETB P0.6
+0D8F 120E86         1980       LCALL MPD
+0D92 22             1981       RET
+0D93                1982     XH3:
+0D93 C286           1983       CLR P0.6
+0D95 E512           1984       MOV A,12H
+0D97 B41010         1985       CJNE A,#10H,SH4
+0D9A E513           1986       MOV A,13H
+0D9C B4200B         1987       CJNE A,#20H,SH4
+0D9F E514           1988       MOV A,14H
+0DA1 B40006         1989       CJNE A,#00H,SH4
+0DA4 D286           1990       SETB P0.6
+0DA6 120E86         1991       LCALL MPD
+0DA9 22             1992       RET
+0DAA                1993     SH4:
+0DAA E512           1994       MOV A,12H
+0DAC B41010         1995       CJNE A,#10H,XH4
+0DAF E513           1996       MOV A,13H
+0DB1 B4300B         1997       CJNE A,#30H,XH4
+0DB4 E514           1998       MOV A,14H
+0DB6 B40006         1999       CJNE A,#00H,XH4
+0DB9 D286           2000       SETB P0.6
+0DBB 120E86         2001       LCALL MPD
+0DBE 22             2002       RET
+0DBF                2003     XH4:
+0DBF C286           2004       CLR P0.6
+0DC1 E512           2005       MOV A,12H
+0DC3 B41110         2006       CJNE A,#11H,SH5
+0DC6 E513           2007       MOV A,13H
+0DC8 B4100B         2008       CJNE A,#10H,SH5
+0DCB E514           2009       MOV A,14H
+0DCD B40006         2010       CJNE A,#00H,SH5
+0DD0 D286           2011       SETB P0.6
+0DD2 120E86         2012       LCALL MPD
+0DD5 22             2013       RET
+0DD6                2014     SH5:
+0DD6 E512           2015       MOV A,12H
+0DD8 B41110         2016       CJNE A,#11H,XH5
+0DDB E513           2017       MOV A,13H
+0DDD B4200B         2018       CJNE A,#20H,XH5
+0DE0 E514           2019       MOV A,14H
+0DE2 B40006         2020       CJNE A,#00H,XH5
+0DE5 D286           2021       SETB P0.6
+0DE7 120E86         2022       LCALL MPD
+0DEA 22             2023       RET
+0DEB                2024     XH5:
+0DEB C286           2025       CLR P0.6
+0DED E512           2026       MOV A,12H
+0DEF B41210         2027       CJNE A,#12H,XSH1
+0DF2 E513           2028       MOV A,13H
+0DF4 B4000B         2029       CJNE A,#00H,XSH1
+0DF7 E514           2030       MOV A,14H
+0DF9 B40006         2031       CJNE A,#00H,XSH1
+0DFC D286           2032       SETB P0.6
+0DFE 120E86         2033       LCALL MPD
+0E01 22             2034       RET
+                    2035     
+0E02                2036     XSH1:
+0E02 E512           2037       MOV A,12H
+0E04 B41510         2038       CJNE A,#15H,XXH1
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    32
+
+0E07 E513           2039       MOV A,13H
+0E09 B4000B         2040       CJNE A,#00H,XXH1
+0E0C E514           2041       MOV A,14H
+0E0E B40006         2042       CJNE A,#00H,XXH1
+0E11 D286           2043       SETB P0.6
+0E13 120E86         2044       LCALL MPD
+0E16 22             2045       RET
+0E17                2046     XXH1:
+0E17 C286           2047       CLR P0.6
+0E19 E512           2048       MOV A,12H
+0E1B B41510         2049       CJNE A,#15H,XSH2
+0E1E E513           2050       MOV A,13H
+0E20 B4400B         2051       CJNE A,#40H,XSH2
+0E23 E514           2052       MOV A,14H
+0E25 B40006         2053       CJNE A,#00H,XSH2
+0E28 D286           2054       SETB P0.6
+0E2A 120E86         2055       LCALL MPD
+0E2D 22             2056       RET
+0E2E                2057     XSH2:
+0E2E E512           2058       MOV A,12H
+0E30 B41510         2059       CJNE A,#15H,XXH2
+0E33 E513           2060       MOV A,13H
+0E35 B4500B         2061       CJNE A,#50H,XXH2
+0E38 E514           2062       MOV A,14H
+0E3A B40006         2063       CJNE A,#00H,XXH2
+0E3D D286           2064       SETB P0.6
+0E3F 120E86         2065       LCALL MPD
+0E42 22             2066       RET
+0E43                2067     XXH2:
+0E43 C286           2068       CLR P0.6
+0E45 E512           2069       MOV A,12H
+0E47 B41610         2070       CJNE A,#16H,XSH3
+0E4A E513           2071       MOV A,13H
+0E4C B4300B         2072       CJNE A,#30H,XSH3
+0E4F E514           2073       MOV A,14H
+0E51 B40006         2074       CJNE A,#00H,XSH3
+0E54 D286           2075       SETB P0.6
+0E56 120E86         2076       LCALL MPD
+0E59 22             2077       RET
+0E5A                2078     XSH3:
+0E5A E512           2079       MOV A,12H
+0E5C B41610         2080       CJNE A,#16H,XXH3
+0E5F E513           2081       MOV A,13H
+0E61 B4400B         2082       CJNE A,#40H,XXH3
+0E64 E514           2083       MOV A,14H
+0E66 B40006         2084       CJNE A,#00H,XXH3
+0E69 D286           2085       SETB P0.6
+0E6B 120E86         2086       LCALL MPD
+0E6E 22             2087       RET
+0E6F                2088     XXH3:
+0E6F C286           2089       CLR P0.6
+0E71 E512           2090       MOV A,12H
+0E73 B4170F         2091       CJNE A,#17H,ZZ2
+0E76 E513           2092       MOV A,13H
+0E78 B4200A         2093       CJNE A,#20H,ZZ2
+0E7B E514           2094       MOV A,14H
+0E7D B40005         2095       CJNE A,#00H,ZZ2
+0E80 D286           2096       SETB P0.6
+0E82 120E86         2097       LCALL MPD
+0E85                2098     ZZ2:
+0E85 22             2099       RET
+0E86                2100     MPD:
+0E86 E514           2101       MOV A,14H
+0E88 B410FA         2102       CJNE A,#10H,ZZ2
+0E8B C286           2103       CLR P0.6
+0E8D 22             2104       RET
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    33
+
+                    2105     
+                    2106     ;;显示程序;;;
+                    2107     
+0E8E                2108     DISPLAY:
+0E8E E510           2109       MOV A,10H
+0E90 540F           2110       ANL A,#00001111B
+0E92 F559           2111       MOV 59H,A
+0E94 E576           2112       MOV A,76H               ;第八列LED
+0E96 540F           2113       ANL A,#00001111B
+0E98 C4             2114       SWAP A
+0E99 2559           2115       ADD A,59H
+0E9B F590           2116       MOV P1,A
+0E9D E570           2117       MOV A,70H
+0E9F 540F           2118       ANL A,#00001111B
+0EA1 2470           2119       ADD A,#01110000B
+0EA3 F5A0           2120       MOV P2,A
+0EA5 120F82         2121       LCALL DL1MS
+                    2122     
+0EA8 E510           2123       MOV A,10H
+0EAA 54F0           2124       ANL A,#11110000B
+0EAC C4             2125       SWAP A
+0EAD F55A           2126       MOV 5AH,A
+0EAF E577           2127       MOV A,77H              ;第七列LED
+0EB1 540F           2128       ANL A,#00001111B
+0EB3 C4             2129       SWAP A
+0EB4 255A           2130       ADD A,5AH
+0EB6 F590           2131       MOV P1,A
+0EB8 E571           2132       MOV A,71H
+0EBA 540F           2133       ANL A,#00001111B
+0EBC 2460           2134       ADD A,#01100000B
+0EBE F5A0           2135       MOV P2,A
+0EC0 120F82         2136       LCALL DL1MS
+                    2137     
+0EC3 E556           2138       MOV A,56H             ;第六列LED
+0EC5 C4             2139       SWAP A
+0EC6 54F0           2140       ANL A,#11110000B
+0EC8 2579           2141       ADD A,79H
+0ECA C4             2142       SWAP A
+0ECB F590           2143       MOV P1,A
+0ECD E572           2144       MOV A,72H
+0ECF 540F           2145       ANL A,#00001111B
+0ED1 2450           2146       ADD A,#01010000B
+0ED3 F5A0           2147       MOV P2,A
+0ED5 120F82         2148       LCALL DL1MS
+                    2149     
+0ED8 E556           2150       MOV A,56H            ;第五列LED
+0EDA 54F0           2151       ANL A,#11110000B
+0EDC 257A           2152       ADD A,7AH
+0EDE C4             2153       SWAP A
+0EDF F590           2154       MOV P1,A
+0EE1 E573           2155       MOV A,73H
+0EE3 540F           2156       ANL A,#00001111B
+0EE5 2440           2157       ADD A,#01000000B
+0EE7 F5A0           2158       MOV P2,A
+0EE9 120F82         2159       LCALL DL1MS
+                    2160     
+0EEC E557           2161       MOV A,57H            ;第四列LED
+0EEE C4             2162       SWAP A
+0EEF 54F0           2163       ANL A,#11110000B
+0EF1 257B           2164       ADD A,7BH
+0EF3 C4             2165       SWAP A
+0EF4 F590           2166       MOV P1,A
+0EF6 E574           2167       MOV A,74H
+0EF8 540F           2168       ANL A,#00001111B
+0EFA 2430           2169       ADD A,#00110000B
+0EFC F5A0           2170       MOV P2,A
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    34
+
+0EFE 120F82         2171       LCALL DL1MS
+                    2172     
+0F01 E557           2173       MOV A,57H            ;第三列LED
+0F03 54F0           2174       ANL A,#11110000B
+0F05 257C           2175       ADD A,7CH
+0F07 C4             2176       SWAP A
+0F08 F590           2177       MOV P1,A
+0F0A E575           2178       MOV A,75H
+0F0C 540F           2179       ANL A,#00001111B
+0F0E 2420           2180       ADD A,#00100000B
+0F10 F5A0           2181       MOV P2,A
+0F12 120F82         2182       LCALL DL1MS
+                    2183     
+0F15 75900F         2184       MOV P1,#00001111B
+0F18 75A01F         2185       MOV P2,#00011111B    ;第二列LED
+0F1B 120F82         2186       LCALL DL1MS
+                    2187     
+0F1E E578           2188       MOV A,78H            ;第一列LED
+0F20 540F           2189       ANL A,#00001111B
+0F22 2420           2190       ADD A,#00100000B
+0F24 F590           2191       MOV P1,A
+0F26 75A00F         2192       MOV P2,#00001111B
+0F29 120F82         2193       LCALL DL1MS
+0F2C 7590FF         2194       MOV P1,#0FFH
+0F2F 22             2195       RET
+0F30                2196     ZJ:
+0F30 750196         2197       MOV 01H,#150
+0F33                2198     ZZZ1:
+0F33 75A008         2199       MOV P2,#00001000B
+0F36 759088         2200       MOV P1,#88H
+0F39 120F82         2201       LCALL DL1MS
+0F3C 75A018         2202       MOV P2,#00011000B
+0F3F 759088         2203       MOV P1,#88H
+0F42 120F82         2204       LCALL DL1MS
+0F45 75A028         2205       MOV P2,#00101000B
+0F48 759088         2206       MOV P1,#88H
+0F4B 120F82         2207       LCALL DL1MS
+0F4E 75A038         2208       MOV P2,#00111000B
+0F51 759088         2209       MOV P1,#88H
+0F54 120F82         2210       LCALL DL1MS
+0F57 75A048         2211       MOV P2,#01001000B
+0F5A 759088         2212       MOV P1,#88H
+0F5D 120F82         2213       LCALL DL1MS
+0F60 75A058         2214       MOV P2,#01011000B
+0F63 759088         2215       MOV P1,#88H
+0F66 120F82         2216       LCALL DL1MS
+0F69 75A068         2217       MOV P2,#01101000B
+0F6C 759088         2218       MOV P1,#88H
+0F6F 120F82         2219       LCALL DL1MS
+0F72 75A078         2220       MOV P2,#01111000B
+0F75 759088         2221       MOV P1,#88H
+0F78 120F82         2222       LCALL DL1MS
+0F7B D501B5         2223       DJNZ 01H,ZZZ1
+0F7E 7590FF         2224       MOV P1,#0FFH
+0F81 22             2225       RET
+                    2226     
+0F82                2227     DL1MS:
+0F82 7E14           2228       MOV R6,#14H
+0F84                2229     DL1:
+0F84 7F19           2230       MOV R7,#19H
+0F86                2231     DL2:
+0F86 DFFE           2232       DJNZ R7,DL2
+0F88 DEFA           2233       DJNZ R6,DL1
+0F8A 22             2234       RET
+                    2235     
+                    2236     ;数据表~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    35
+
+0F8B                2237     TAB:
+0F8B 23155100       2238       DB 35,15H,51H,00H,23,11H,52H,41H,42,12H,65H,00H
+0F8F 17115241                
+0F93 2A126500                
+0F97 1F113200       2239       DB 31,11H,32H,00H,21,42H,52H,21H,39,52H,25H,00H
+0F9B 15425221                
+0F9F 27522500                
+0FA3 1C250471       2240       DB 28,25H,04H,71H,48,66H,42H,00H,37,33H,22H,00H
+0FA7 30664200                
+0FAB 25332200                
+0FAF 19152451       2241       DB 25,15H,24H,51H,44,05H,52H,00H,33,22H,65H,00H
+0FB3 2C055200                
+0FB7 21226500                
+0FBB 16212541       2242       DB 22,21H,25H,41H,40,24H,52H,00H,30,52H,42H,91H
+0FBF 28245200                
+0FC3 1E524291                
+0FC7 31550500       2243       DB 49,55H,05H,00H,38,26H,44H,00H,27,53H,50H,60H
+0FCB 26264400                
+0FCF 1B535060                
+0FD3 2E532400       2244       DB 46,53H,24H,00H,35,25H,54H,00H,24,41H,52H,41H
+0FD7 23255400                
+0FDB 18415241                
+0FDF 2A452500       2245       DB 42,45H,25H,00H,31,24H,52H,00H,21,51H,12H,21H
+0FE3 1F245200                
+0FE7 15511221                
+0FEB 28551100       2246       DB 40,55H,11H,00H,28,26H,21H,61H,47,26H,61H,00H
+0FEF 1C262161                
+0FF3 2F266100                
+0FF7 24133100       2247       DB 36,13H,31H,00H,25,05H,31H,51H,43,12H,54H,00H
+0FFB 19053151                
+0FFF 2B125400                
+1003 21512500       2248       DB 33,51H,25H,00H,22,42H,25H,31H,41,32H,22H,00H
+1007 16422531                
+100B 29322200                
+100F 1E550271       2249       DB 30,55H,02H,71H,49,55H,22H,00H,38,26H,62H,00H
+1013 31552200                
+1017 26266200                
+101B 1B136460       2250       DB 27,13H,64H,60H,45,13H,32H,00H,34,12H,55H,00H
+101F 2D133200                
+1023 22125500                
+1027 17105351       2251       DB 23,10H,53H,51H,42,22H,45H,00H,31,52H,22H,00H
+102B 2A224500                
+102F 1F522200                
+1033 15524421       2252       DB 21,52H,44H,21H,40,55H,44H,00H,29,26H,50H,71H
+1037 28554400                
+103B 1D265071                
+103F 2F266400       2253       DB 47,26H,64H,00H,36,25H,32H,00H,25,23H,32H,50H
+1043 24253200                
+1047 19233250                
+104B 2C445500       2254       DB 44,44H,55H,00H,32,24H,45H,00H,22,55H,11H,30H
+104F 20244500                
+1053 16551130                
+                    2255       END
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    36
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AAA. . . . . . . .  C ADDR   065FH   A   
+AAAA . . . . . . .  C ADDR   05EEH   A   
+ACC. . . . . . . .  D ADDR   00E0H   A   
+ADD1 . . . . . . .  C ADDR   045EH   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BBB. . . . . . . .  C ADDR   0673H   A   
+BBBB . . . . . . .  C ADDR   05F3H   A   
+BCD_10 . . . . . .  C ADDR   04FBH   A   
+CCC. . . . . . . .  C ADDR   066DH   A   
+CHECKMONTH . . . .  C ADDR   050AH   A   
+CHECKRE. . . . . .  C ADDR   0D03H   A   
+CHUSHI . . . . . .  C ADDR   011BH   A   
+CONFIG12 . . . . .  N NUMB   007FH   A   
+DAT. . . . . . . .  B ADDR   0080H.7 A   
+DAY. . . . . . . .  D ADDR   0063H   A   
+DDD. . . . . . . .  C ADDR   0691H   A   
+DISPLAY. . . . . .  C ADDR   0E8EH   A   
+DIVIDE . . . . . .  C ADDR   047FH   A   
+DL1. . . . . . . .  C ADDR   0F84H   A   
+DL1MS. . . . . . .  C ADDR   0F82H   A   
+DL2. . . . . . . .  C ADDR   0F86H   A   
+D_BCD. . . . . . .  C ADDR   0D08H   A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+EEE. . . . . . . .  C ADDR   0684H   A   
+ERAD111. . . . . .  C ADDR   019CH   A   
+ET1. . . . . . . .  B ADDR   00A8H.3 A   
+F0 . . . . . . . .  B ADDR   00D0H.5 A   
+FFF. . . . . . . .  C ADDR   069FH   A   
+GADDDAY. . . . . .  C ADDR   028BH   A   
+GADDDAY1 . . . . .  C ADDR   02A5H   A   
+GADDHOUR . . . . .  C ADDR   032BH   A   
+GADDHOUR1. . . . .  C ADDR   0347H   A   
+GADDMINTUE . . . .  C ADDR   037EH   A   
+GADDMINTUE1. . . .  C ADDR   039AH   A   
+GADDMONTH. . . . .  C ADDR   0238H   A   
+GADDMONTH1 . . . .  C ADDR   0254H   A   
+GADDWEEK . . . . .  C ADDR   02DCH   A   
+GADDWEEK1. . . . .  C ADDR   02F8H   A   
+GADDYEAR . . . . .  C ADDR   01E5H   A   
+GADDYEAR1. . . . .  C ADDR   0201H   A   
+GENGXIAN . . . . .  C ADDR   0525H   A   
+GFLASH . . . . . .  C ADDR   03F1H   A   
+GFLASH1. . . . . .  C ADDR   0422H   A   
+GFLASH2. . . . . .  C ADDR   042DH   A   
+GFLASH3. . . . . .  C ADDR   0438H   A   
+GFLASH4. . . . . .  C ADDR   0443H   A   
+GFLASH5. . . . . .  C ADDR   044BH   A   
+GFLASH6. . . . . .  C ADDR   0456H   A   
+GFLASHOUT. . . . .  C ADDR   041DH   A   
+GGG. . . . . . . .  C ADDR   05AAH   A   
+GGG1 . . . . . . .  C ADDR   05FDH   A   
+GGG2 . . . . . . .  C ADDR   05FCH   A   
+GGG3 . . . . . . .  C ADDR   0619H   A   
+GGG4 . . . . . . .  C ADDR   0644H   A   
+GGG5 . . . . . . .  C ADDR   0631H   A   
+GGG6 . . . . . . .  C ADDR   061FH   A   
+GM10 . . . . . . .  C ADDR   05B0H   A   
+GM11 . . . . . . .  C ADDR   05C0H   A   
+GM12 . . . . . . .  C ADDR   05D0H   A   
+GM2. . . . . . . .  C ADDR   0537H   A   
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    37
+
+GM3. . . . . . . .  C ADDR   0545H   A   
+GM4. . . . . . . .  C ADDR   0553H   A   
+GM5. . . . . . . .  C ADDR   0561H   A   
+GM6. . . . . . . .  C ADDR   056FH   A   
+GM7. . . . . . . .  C ADDR   057DH   A   
+GM8. . . . . . . .  C ADDR   058BH   A   
+GM9. . . . . . . .  C ADDR   0599H   A   
+GWAIT. . . . . . .  C ADDR   01D1H   A   
+GWAIT10. . . . . .  C ADDR   036AH   A   
+GWAIT2 . . . . . .  C ADDR   0224H   A   
+GWAIT4 . . . . . .  C ADDR   0277H   A   
+GWAIT6 . . . . . .  C ADDR   02C8H   A   
+GWAIT8 . . . . . .  C ADDR   0317H   A   
+HOUR . . . . . . .  D ADDR   0062H   A   
+INTT1. . . . . . .  C ADDR   03EDH   A   
+IO . . . . . . . .  B ADDR   00B0H.3 A   
+JIAN1. . . . . . .  C ADDR   0463H   A   
+JIANDAY. . . . . .  C ADDR   0298H   A   
+JIANHOUR . . . . .  C ADDR   033AH   A   
+JIANMINTUE . . . .  C ADDR   038DH   A   
+JIANMONTH. . . . .  C ADDR   0247H   A   
+JIANWEEK . . . . .  C ADDR   02EBH   A   
+JIANYEAR . . . . .  C ADDR   01F4H   A   
+KK1. . . . . . . .  C ADDR   046AH   A   
+KK2. . . . . . . .  C ADDR   046FH   A   
+KK3. . . . . . . .  C ADDR   0474H   A   
+KK4. . . . . . . .  C ADDR   0479H   A   
+KK5. . . . . . . .  C ADDR   047EH   A   
+LA . . . . . . . .  C ADDR   0156H   A   
+LB . . . . . . . .  C ADDR   015BH   A   
+LC . . . . . . . .  C ADDR   0165H   A   
+LD . . . . . . . .  C ADDR   0170H   A   
+LF . . . . . . . .  C ADDR   017CH   A   
+LP . . . . . . . .  C ADDR   0179H   A   
+M1 . . . . . . . .  C ADDR   06ADH   A   
+M10. . . . . . . .  C ADDR   0910H   A   
+M101 . . . . . . .  C ADDR   091EH   A   
+M102 . . . . . . .  C ADDR   0925H   A   
+M103 . . . . . . .  C ADDR   092BH   A   
+M11. . . . . . . .  C ADDR   0933H   A   
+M111 . . . . . . .  C ADDR   0941H   A   
+M112 . . . . . . .  C ADDR   0948H   A   
+M113 . . . . . . .  C ADDR   094EH   A   
+M12. . . . . . . .  C ADDR   0956H   A   
+M121 . . . . . . .  C ADDR   0964H   A   
+M122 . . . . . . .  C ADDR   096AH   A   
+M13. . . . . . . .  C ADDR   06C7H   A   
+M2 . . . . . . . .  C ADDR   06CEH   A   
+M21. . . . . . . .  C ADDR   06DCH   A   
+M22. . . . . . . .  C ADDR   06E2H   A   
+M23. . . . . . . .  C ADDR   06E8H   A   
+M3 . . . . . . . .  C ADDR   0718H   A   
+M31. . . . . . . .  C ADDR   0726H   A   
+M32. . . . . . . .  C ADDR   072CH   A   
+M33. . . . . . . .  C ADDR   0732H   A   
+M4 . . . . . . . .  C ADDR   0763H   A   
+M41. . . . . . . .  C ADDR   0771H   A   
+M42. . . . . . . .  C ADDR   0777H   A   
+M43. . . . . . . .  C ADDR   077DH   A   
+M5 . . . . . . . .  C ADDR   07AEH   A   
+M51. . . . . . . .  C ADDR   07BCH   A   
+M52. . . . . . . .  C ADDR   07C2H   A   
+M53. . . . . . . .  C ADDR   07C8H   A   
+M6 . . . . . . . .  C ADDR   07FDH   A   
+M61. . . . . . . .  C ADDR   080BH   A   
+M62. . . . . . . .  C ADDR   0812H   A   
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    38
+
+M63. . . . . . . .  C ADDR   0818H   A   
+M7 . . . . . . . .  C ADDR   084DH   A   
+M71. . . . . . . .  C ADDR   085BH   A   
+M72. . . . . . . .  C ADDR   0862H   A   
+M73. . . . . . . .  C ADDR   0868H   A   
+M8 . . . . . . . .  C ADDR   089DH   A   
+M81. . . . . . . .  C ADDR   08ABH   A   
+M82. . . . . . . .  C ADDR   08B2H   A   
+M83. . . . . . . .  C ADDR   08B8H   A   
+M9 . . . . . . . .  C ADDR   08C0H   A   
+M91. . . . . . . .  C ADDR   08CEH   A   
+M92. . . . . . . .  C ADDR   08D5H   A   
+M93. . . . . . . .  C ADDR   08DBH   A   
+MAIN1. . . . . . .  C ADDR   003EH   A   
+MINTUE . . . . . .  D ADDR   0061H   A   
+MM2. . . . . . . .  C ADDR   06EFH   A   
+MM3. . . . . . . .  C ADDR   0739H   A   
+MM4. . . . . . . .  C ADDR   0784H   A   
+MM5. . . . . . . .  C ADDR   07D0H   A   
+MM6. . . . . . . .  C ADDR   0820H   A   
+MM7. . . . . . . .  C ADDR   0870H   A   
+MM9. . . . . . . .  C ADDR   08E3H   A   
+MONTH. . . . . . .  D ADDR   0065H   A   
+MPD. . . . . . . .  C ADDR   0E86H   A   
+NEW. . . . . . . .  C ADDR   06ACH   A   
+NEW1 . . . . . . .  C ADDR   0635H   A   
+NEW2 . . . . . . .  C ADDR   063BH   A   
+NS . . . . . . . .  C ADDR   0D11H   A   
+OLD. . . . . . . .  C ADDR   0646H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+RD1A . . . . . . .  C ADDR   01A1H   A   
+RD2A . . . . . . .  C ADDR   01A9H   A   
+RD3A . . . . . . .  C ADDR   01B2H   A   
+RDTEMP . . . . . .  C ADDR   012EH   A   
+READ . . . . . . .  C ADDR   04C1H   A   
+READ1. . . . . . .  C ADDR   04CCH   A   
+READ2. . . . . . .  C ADDR   04E0H   A   
+REG2 . . . . . . .  N NUMB   0022H   A   
+REG3 . . . . . . .  N NUMB   0023H   A   
+REG4 . . . . . . .  N NUMB   0024H   A   
+RESET. . . . . . .  C ADDR   0156H   A   
+RM2. . . . . . . .  C ADDR   06F5H   A   
+RM21 . . . . . . .  C ADDR   0701H   A   
+RM22 . . . . . . .  C ADDR   0706H   A   
+RM23 . . . . . . .  C ADDR   070CH   A   
+RM24 . . . . . . .  C ADDR   0712H   A   
+RM3. . . . . . . .  C ADDR   073FH   A   
+RM31 . . . . . . .  C ADDR   074BH   A   
+RM32 . . . . . . .  C ADDR   0750H   A   
+RM33 . . . . . . .  C ADDR   0756H   A   
+RM34 . . . . . . .  C ADDR   075CH   A   
+RM4. . . . . . . .  C ADDR   078AH   A   
+RM41 . . . . . . .  C ADDR   0796H   A   
+RM42 . . . . . . .  C ADDR   079BH   A   
+RM43 . . . . . . .  C ADDR   07A1H   A   
+RM44 . . . . . . .  C ADDR   07A7H   A   
+RM5. . . . . . . .  C ADDR   07D6H   A   
+RM51 . . . . . . .  C ADDR   07E3H   A   
+RM52 . . . . . . .  C ADDR   07E8H   A   
+RM53 . . . . . . .  C ADDR   07EFH   A   
+RM54 . . . . . . .  C ADDR   07F5H   A   
+RM6. . . . . . . .  C ADDR   0826H   A   
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    39
+
+RM61 . . . . . . .  C ADDR   0833H   A   
+RM62 . . . . . . .  C ADDR   0838H   A   
+RM63 . . . . . . .  C ADDR   083FH   A   
+RM64 . . . . . . .  C ADDR   0845H   A   
+RM7. . . . . . . .  C ADDR   0876H   A   
+RM71 . . . . . . .  C ADDR   0883H   A   
+RM72 . . . . . . .  C ADDR   0888H   A   
+RM73 . . . . . . .  C ADDR   088FH   A   
+RM74 . . . . . . .  C ADDR   0895H   A   
+RM9. . . . . . . .  C ADDR   08E9H   A   
+RM91 . . . . . . .  C ADDR   08F6H   A   
+RM92 . . . . . . .  C ADDR   08FBH   A   
+RM93 . . . . . . .  C ADDR   0902H   A   
+RM94 . . . . . . .  C ADDR   0908H   A   
+RST. . . . . . . .  B ADDR   00B0H.2 A   
+RY2. . . . . . . .  C ADDR   09A5H   A   
+RY21 . . . . . . .  C ADDR   09BAH   A   
+RY22 . . . . . . .  C ADDR   09B2H   A   
+RY3. . . . . . . .  C ADDR   0A0EH   A   
+RY31 . . . . . . .  C ADDR   0A23H   A   
+RY32 . . . . . . .  C ADDR   0A1BH   A   
+RY4. . . . . . . .  C ADDR   0A77H   A   
+RY41 . . . . . . .  C ADDR   0A8CH   A   
+RY42 . . . . . . .  C ADDR   0A84H   A   
+RY5. . . . . . . .  C ADDR   0AE0H   A   
+RY51 . . . . . . .  C ADDR   0AF5H   A   
+RY52 . . . . . . .  C ADDR   0AEDH   A   
+RY6. . . . . . . .  C ADDR   0B49H   A   
+RY61 . . . . . . .  C ADDR   0B5EH   A   
+RY62 . . . . . . .  C ADDR   0B56H   A   
+RY7. . . . . . . .  C ADDR   0BB2H   A   
+RY71 . . . . . . .  C ADDR   0BC7H   A   
+RY72 . . . . . . .  C ADDR   0BBFH   A   
+RY9. . . . . . . .  C ADDR   0C3FH   A   
+RY91 . . . . . . .  C ADDR   0C54H   A   
+RY92 . . . . . . .  C ADDR   0C4CH   A   
+SCLK . . . . . . .  B ADDR   00B0H.4 A   
+SECOND . . . . . .  D ADDR   0060H   A   
+SETG . . . . . . .  C ADDR   01BBH   A   
+SETG1. . . . . . .  C ADDR   01D7H   A   
+SETG10 . . . . . .  C ADDR   0368H   A   
+SETG11 . . . . . .  C ADDR   0370H   A   
+SETG111. . . . . .  C ADDR   00ECH   A   
+SETG2. . . . . . .  C ADDR   0222H   A   
+SETG3. . . . . . .  C ADDR   022AH   A   
+SETG4. . . . . . .  C ADDR   0275H   A   
+SETG5. . . . . . .  C ADDR   027DH   A   
+SETG6. . . . . . .  C ADDR   02C6H   A   
+SETG7. . . . . . .  C ADDR   02CEH   A   
+SETG8. . . . . . .  C ADDR   0315H   A   
+SETG9. . . . . . .  C ADDR   031DH   A   
+SETGOUT. . . . . .  C ADDR   03BBH   A   
+SH1. . . . . . . .  C ADDR   0D26H   A   
+SH2. . . . . . . .  C ADDR   0D52H   A   
+SH3. . . . . . . .  C ADDR   0D7EH   A   
+SH4. . . . . . . .  C ADDR   0DAAH   A   
+SH5. . . . . . . .  C ADDR   0DD6H   A   
+SM11 . . . . . . .  C ADDR   06BBH   A   
+SM12 . . . . . . .  C ADDR   06C1H   A   
+SSS. . . . . . . .  C ADDR   00EFH   A   
+START. . . . . . .  C ADDR   001EH   A   
+S_PLAY . . . . . .  C ADDR   0CF0H   A   
+TAB. . . . . . . .  C ADDR   0F8BH   A   
+TEMPH. . . . . . .  N NUMB   0021H   A   
+TEMPL. . . . . . .  N NUMB   0020H   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    40
+
+TIAOZHENG1 . . . .  C ADDR   05DDH   A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TOUTOU . . . . . .  C ADDR   00F4H   A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+W51HA. . . . . . .  C ADDR   0183H   A   
+W52HA. . . . . . .  C ADDR   018BH   A   
+W53HA. . . . . . .  C ADDR   0193H   A   
+WAITT1 . . . . . .  C ADDR   0217H   A   
+WAITT2 . . . . . .  C ADDR   026AH   A   
+WAITT3 . . . . . .  C ADDR   02BBH   A   
+WAITT4 . . . . . .  C ADDR   030AH   A   
+WAITT5 . . . . . .  C ADDR   035DH   A   
+WAITT6 . . . . . .  C ADDR   03B0H   A   
+WEEK . . . . . . .  D ADDR   0064H   A   
+WRITE. . . . . . .  C ADDR   0489H   A   
+WRITE1 . . . . . .  C ADDR   0493H   A   
+WRITE111 . . . . .  C ADDR   0180H   A   
+WRITE2 . . . . . .  C ADDR   04ADH   A   
+XH1. . . . . . . .  C ADDR   0D3BH   A   
+XH2. . . . . . . .  C ADDR   0D67H   A   
+XH3. . . . . . . .  C ADDR   0D93H   A   
+XH4. . . . . . . .  C ADDR   0DBFH   A   
+XH5. . . . . . . .  C ADDR   0DEBH   A   
+XSH1 . . . . . . .  C ADDR   0E02H   A   
+XSH2 . . . . . . .  C ADDR   0E2EH   A   
+XSH3 . . . . . . .  C ADDR   0E5AH   A   
+XXH1 . . . . . . .  C ADDR   0E17H   A   
+XXH2 . . . . . . .  C ADDR   0E43H   A   
+XXH3 . . . . . . .  C ADDR   0E6FH   A   
+Y1 . . . . . . . .  C ADDR   0972H   A   
+Y10. . . . . . . .  C ADDR   0C63H   A   
+Y101 . . . . . . .  C ADDR   0C99H   A   
+Y102 . . . . . . .  C ADDR   0C87H   A   
+Y103 . . . . . . .  C ADDR   0C7FH   A   
+Y104 . . . . . . .  C ADDR   0C91H   A   
+Y11. . . . . . . .  C ADDR   0CA8H   A   
+Y111 . . . . . . .  C ADDR   0CBDH   A   
+Y112 . . . . . . .  C ADDR   0CB5H   A   
+Y12. . . . . . . .  C ADDR   0CCCH   A   
+Y121 . . . . . . .  C ADDR   0CE1H   A   
+Y122 . . . . . . .  C ADDR   0CD9H   A   
+Y2 . . . . . . . .  C ADDR   0981H   A   
+Y21. . . . . . . .  C ADDR   0996H   A   
+Y22. . . . . . . .  C ADDR   098EH   A   
+Y3 . . . . . . . .  C ADDR   09C9H   A   
+Y31. . . . . . . .  C ADDR   09FFH   A   
+Y32. . . . . . . .  C ADDR   09EDH   A   
+Y33. . . . . . . .  C ADDR   09E5H   A   
+Y34. . . . . . . .  C ADDR   09F7H   A   
+Y4 . . . . . . . .  C ADDR   0A32H   A   
+Y41. . . . . . . .  C ADDR   0A68H   A   
+Y42. . . . . . . .  C ADDR   0A56H   A   
+Y43. . . . . . . .  C ADDR   0A4EH   A   
+Y44. . . . . . . .  C ADDR   0A60H   A   
+Y5 . . . . . . . .  C ADDR   0A9BH   A   
+Y51. . . . . . . .  C ADDR   0AD1H   A   
+Y52. . . . . . . .  C ADDR   0ABFH   A   
+Y53. . . . . . . .  C ADDR   0AB7H   A   
+Y54. . . . . . . .  C ADDR   0AC9H   A   
+Y6 . . . . . . . .  C ADDR   0B04H   A   
+Y61. . . . . . . .  C ADDR   0B3AH   A   
+Y62. . . . . . . .  C ADDR   0B28H   A   
+Y63. . . . . . . .  C ADDR   0B20H   A   
+Y64. . . . . . . .  C ADDR   0B32H   A   
+Y7 . . . . . . . .  C ADDR   0B6DH   A   
+A51 MACRO ASSEMBLER  52                                                                   03/31/2008 19:12:35 PAGE    41
+
+Y71. . . . . . . .  C ADDR   0BA3H   A   
+Y72. . . . . . . .  C ADDR   0B91H   A   
+Y73. . . . . . . .  C ADDR   0B89H   A   
+Y74. . . . . . . .  C ADDR   0B9BH   A   
+Y8 . . . . . . . .  C ADDR   0BD6H   A   
+Y81. . . . . . . .  C ADDR   0C0CH   A   
+Y82. . . . . . . .  C ADDR   0BFAH   A   
+Y83. . . . . . . .  C ADDR   0BF2H   A   
+Y84. . . . . . . .  C ADDR   0C04H   A   
+Y9 . . . . . . . .  C ADDR   0C1BH   A   
+Y91. . . . . . . .  C ADDR   0C30H   A   
+Y92. . . . . . . .  C ADDR   0C28H   A   
+YEAR . . . . . . .  D ADDR   0066H   A   
+ZJ . . . . . . . .  C ADDR   0F30H   A   
+ZZ2. . . . . . . .  C ADDR   0E85H   A   
+ZZZ1 . . . . . . .  C ADDR   0F33H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

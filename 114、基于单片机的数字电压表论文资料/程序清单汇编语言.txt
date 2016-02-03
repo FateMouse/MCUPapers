@@ -1,0 +1,233 @@
+附录1：程序清单
+
+
+在Keil环境下ASM程序,抱歉了，暂时没有C语言的
+
+/*           赵营的毕业设计SVM1601A （16x1）接线图
+=================================================================
+连接线图:   MCU-----89S52 
+            DB0-----P2.0     DB4-----P2.4     RS-------P0_1
+            DB1-----P2.1     DB5-----P2.5     RW-------P0_2
+            DB2-----P2.2     DB6-----P2.6     E--------P0_3
+            DB3-----P2.3     DB7-----P2.7     
+            
+            VLCD接1K电阻到GND
+
+=================================================================*/
+/*           赵营的毕业设计ICL7135接线图
+=================================================================
+连接线图:   MCU-----89S52 
+            /STR----P3.2(/INT0)
+            B1-----P0.4      R/H------P0.0     BUSY----P3.6
+            B2-----P0.5      POL------P1.5
+            B4-----P0.6      OVER-----P1.6
+            B8-----P0.7      UNDER----P1.7   
+
+================================================================*/
+
+DARPOLE  EQU  60H           ;正负号地址
+DARSTART EQU  61H           ;第一数位
+DAREND   EQU  67H           ;结束位
+INTNUM   EQU  68H           ;用于判断中断次数的寄存器
+VGRADE   EQU  69H           ;档位值
+DPOINT   EQU  6AH           ;小数点位
+BEGIN    EQU  6BH           ;显示数据标志位
+ADSTART  BIT  P0.0          ;A/D转换使能
+
+RS BIT P0.1
+RW BIT P0.2
+E  BIT P0.3
+
+ORG 0000H
+SJMP START
+ORG 0003H 
+LJMP INTUSE
+
+START: SETB ADSTART          ;赵营的毕业设计
+       MOV INTNUM,#00H       ;清中断次数
+       MOV SCON,#50H         ;UART工作在MODE1
+       MOV TMOD,#20H         ;TIMER1工作在MODE2
+       MOV TH1,#0A0H         ;波特率300
+       SETB TR1              ;启动记时器1
+       MOV IE,#10000001B     ;中断EA使能，EX0使能	
+       MOV SP,#70H           ;设置堆栈
+       MOV BEGIN,#00H
+       MOV P2,#01H	     ;清屏 
+       CALL ENABLE   	     ;写到指令寄存器
+       MOV P2,#38H	     ;功能设定（8位，2行，5*7点阵）智表设计P236
+       CALL ENABLE      
+       MOV P2,#00001100B     ;显示器ON，光标OFF，闪烁OFF
+       CALL ENABLE      
+       MOV P2,#06H	     ;I/D=1,DDRAM地址加1，显示器OFF
+       CALL ENABLE      
+  S1 : MOV P2,#80H           ;第一行字符起始地址
+       CALL ENABLE
+       JNB P1.6,S2
+       MOV DPTR,#TABLE0
+       AJMP S3
+  S2 : MOV DPTR,#TABLE1      ;显示'Voltage'字符
+  S3 : CALL WRITE1   
+       MOV A,BEGIN
+       CJNE A,#01H,S1
+       MOV P2,#0C0H          ;第二行字符起始地址 
+       CALL ENABLE           
+       CALL WRITE2           ;显示A/D采样的数据 
+       CALL SERCOM           ;串行通讯
+       AJMP S1     
+         
+ENABLE:CLR RS                ;RS=0，写到指令寄存器
+       CLR RW                ;R/W=0
+       SETB E                ;E  1→0 使能
+       CALL DELAY            ;延时2.5ms
+       CLR E                 ;禁止
+       RET
+
+WRITE1:MOV R1,#00H           ;输出字符的子程序
+   A1: MOV A,R1
+       MOVC A,@A+DPTR
+       CJNE A,#00H,A2
+       RET
+   A2: CALL WRITE3           ;写到LCD ROM的子程序
+       INC R1
+       AJMP A1
+
+WRITE2:MOV R0,#60H           ;输出数据的子程序，数据区地址  
+   A3: MOV A,@R0
+       CALL WRITE3           ;写到LCD ROM的子程序   
+       INC R0
+       CJNE R0,#DAREND,A3
+       MOV R0,#60H
+       RET
+
+WRITE3:MOV P2,A              ;写到LCD ROM的子程序
+       SETB RS
+       CLR RW
+       SETB E
+       CALL DELAY            ;延时2.5ms
+       CLR E
+       RET
+
+SERCOM:MOV R1,#00H           ;输出字符的子程序
+  A11: MOV A,R1
+       MOVC A,@A+DPTR
+       CJNE A,#00H,A12
+       AJMP A14
+  A12: MOV SBUF,A  ;写到LCD ROM的子程序
+  A16: JBC TI,A15 
+       AJMP A16           
+  A15: INC R1
+       AJMP A11
+  A14: MOV R0,#60H           ;输出数据的子程序，数据区地址  
+  A4:  MOV A,@R0
+       MOV SBUF,A
+  A6:  JBC TI,A5 
+       AJMP A6
+  A5:  INC R0
+       CJNE R0,#DAREND,A4
+       RET
+
+ DELAY:MOV R4,#05H           ;延时2.5ms子程序              
+   D1: MOV R5,#0FFH
+       DJNZ R5,$
+       DJNZ R4,D1
+       RET
+
+/*             赵营的毕业设计中断寄存器使用情况
+=================================================================
+            MCU-----89S52
+            R0 ----- 存数首地址         P1.0 = 0 ----- 2V档位 
+            R2 ----- 档位值             P1.1 = 0 ----- 20V档位
+            R3 ----- 定义小数点位       P1.2 = 0 ----- 200V档位
+            R4 ----- 消隐标志位         P1.3 = 0 ----- 2000V档位
+
+=================================================================*/
+INTUSE:                         ;中断子程序
+       CLR EA
+       PUSH ACC                 
+       PUSH PSW   
+       SETB PSW.3               ;切换寄存器组1
+       MOV A,#00H               ;#00H,判断是否首次！
+       CJNE A,INTNUM,NEXT       ;是首次中断吗？非则转NEXT
+       MOV R0,#DARSTART         ;数据区首地址  
+       MOV R2,#00H              ;清档位值
+       MOV R3,#00H              ;清小数点位
+       MOV R4,#01H              ;置消隐标志位
+       JNB P1.6,K0
+       SETB P1.4
+       AJMP K1
+  K0:  CLR P1.4
+  K1:  JB P1.5,POL              ;置正负号  
+       MOV DARPOLE,#2DH         ;负显示负号
+       AJMP K2
+  POL: MOV DARPOLE,#20H         ;正则不显示
+  K2:  MOV A,P0                 ;读P0口，读7135输出的BCD码
+       ANL A,#0F0H              ;取高四位
+       SWAP A
+       ADD A,#30H    
+       SETB P1.0                ;判档位
+       SETB P1.1
+       SETB P1.2
+       SETB P1.3
+       JNB P1.0,IA1             ;是2V档吗？
+       INC R2
+       JNB P1.1,IA1             ;是20V档吗？
+       INC R2
+       JNB P1.2,IA1             ;是200V档吗？
+       INC R2  
+ IA1:  XCH A,R3                 ;定义小数点位
+       MOV A,R2
+       ADD A,#62H
+       XCH A,R3
+       MOV DPOINT,R3 
+       CJNE R2,#00H,IB0         ;是2V档位
+       AJMP IB1
+  IB0: CJNE A,#30H,IB1          ;A是零吗？
+       AJMP IB2
+  IB1: MOV R4,#00H              ;清消隐标志位
+       AJMP IB3
+  IB2: MOV R4,#01H              ;置标志位
+       ADD A,#70H      
+  IB3: MOV @R0,A
+       INC R0               
+       INC INTNUM               ;中断次数加1
+ RETN: POP PSW
+       POP ACC
+       SETB EA
+       RETI
+ NEXT: MOV A,R0
+       CJNE A,DPOINT,NEXT3      ;置小数点
+       MOV @R0,#2EH
+       INC R0
+ NEXT3:MOV A,P0                 
+       ANL A,#0F0H
+       SWAP A
+       ADD A,#30H
+       CJNE A,#30H,IC1
+       CJNE R4,#01H,IC2
+       CALL REMOVE
+       AJMP IC2
+  IC1: MOV R4,#00H    
+  IC2: MOV @R0,A               ;送到数据区
+       INC R0
+       INC INTNUM
+       MOV A,R0
+       CJNE A,#DAREND,RETN     ;够五次了吗？
+       MOV INTNUM,#00H         ;清中断次数
+       MOV BEGIN,#01H
+       SJMP RETN
+
+REMOVE:MOV R1,INTNUM           ;消隐子程序
+       CJNE R1,#01H,IEE1       ;是第二次中断吗？
+       CJNE R2,#01H,IEE2       ;是20V档吗？
+       MOV R4,#00H
+       RET
+  IEE2:ADD A,#70H   
+       RET
+  IEE1:CJNE R1,#02H,RETN2      ;是第三次中断吗？
+       CJNE R2,#03H,RETN2      ;是2000V档吗？
+       ADD A,#70H
+       MOV R4,#00H
+ RETN2:RET  
+TABLE0:DB 'Over!!!:',00H       ;显示字符，00H结束位
+TABLE1:DB 'Voltage:',00H       ;显示字符，00H结束位
+END

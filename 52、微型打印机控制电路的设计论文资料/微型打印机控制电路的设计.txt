@@ -1,0 +1,32 @@
+微型打印机控制电路的设计
+
+摘　要：　目前，电子领域正向着数字化、信息化、微型化的方向发展。打印机作为数据输出设备之一也朝着多功能、高性能的方向发展，微型打印机是电子信息领域中一种很重要的输出设备。本设计基于TPμP-40A微型打印机，采用89S52单片机控制，利用并行接口技术，同时通过液晶显示器显示打印的数据和文字信息。可以实现打印一段固定的汉字和单个任意的数字，同时把打印的内容显示在液晶显示器上。它具有速度快、噪声低、体积小、重量轻、运行可靠、维护成本低等特点。
+关键词：微型打印机　单片机　液晶显示器　键盘
+
+The design of control circuit in Micro-printer
+Abstract：Nowadays, electronic field is developing towards the direction of digitization、informatization and micromation. As one of data output equipments, the printer is also spreading out in multifunction、high-performance. And the Micro-printer is a very important output equipment in electronic information field. Based on Micro-printer——TPμP-40A, this design adopts micro-controller (89S52), makes use of parallel-interface technique and in the meantime displays printing data and word information on Liquid Crystal Display. It can print a paragraph of regular Chinese characters and single discretional number. At the same time the Liquid Crystal Display can display print content. It possesses the characteristics of high-speed、low-noise、small-volume 、lightweight、reliable running and low cost of maintenance.
+Keywords: Micro-printer  Single Chip Computer  Liquid Crystal Display  Keyboard
+
+目  录
+
+1 引言…………………………………………………………………………………1
+2 设计要求……………………………………………………………………………1
+3 系统组成……………………………………………………………………………1
+4 硬件部分设计………………………………………………………………………2
+4.1打印机部分………………………………………………………………………2
+4.2单片机芯片部分………………………………………………………………5
+4.3 单片机与微型打印机的接口……………………………………………………7
+4.4单片机与液晶显示器的接口……………………………………………………11
+4.5键盘部分…………………………………………………………………………15
+4.6 电源模块设计……………………………………………………………………18
+5 软件部分……………………………………………………………………………20
+5.1 程序设计整体流程图……………………………………………………………20
+5.2 键处理流程图…………………………………………………………………21
+6 显示与测试结果……………………………………………………………………22
+7 结论…………………………………………………………………………………23
+参考文献………………………………………………………………………………24
+致谢……………………………………………………………………………………25
+附录 1：程序…………………………………………………………………………26
+附录2：整机电路图…………………………………………………………………47
+英文资料及中文翻译…………………………………………………………………48
+

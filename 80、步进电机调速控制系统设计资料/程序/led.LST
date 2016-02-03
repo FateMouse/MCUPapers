@@ -1,0 +1,249 @@
+C51 COMPILER V8.05a   LED                                                                  10/18/2008 01:33:35 PAGE 1   
+
+
+C51 COMPILER V8.05a, COMPILATION OF MODULE LED
+OBJECT MODULE PLACED IN led.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE led.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<reg52.h> 
+   2          #define unint unsigned int
+   3          void delay();
+   4          
+   5          void anjian();
+   6          void frun();
+   7          void zrun();
+   8          code unsigned char runz[8]={ 0x03,0x0b,0x09,0x0d,0x0c,0x0e,0x06,0x07}; //Õý×ª¶¯Êý×é
+   9          code unsigned char runf[8]={ 0x07,0x06,0x0e,0x0c,0x0d,0x09,0x0b,0x03}; //·´×ª¶¯Êý×é
+  10          code unsigned char seg7code[10]={ 0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90}; //ÏÔÊ¾¶ÎÂë ÊýÂë¹Ü×Ö¸
+             -ú£º
+  11          unsigned char a,b,s,i,j,k,z,gw,sw,bw,speed,m;
+  12          int y=31;//¶¨Òå×ª¶¯ËÙ¶È£¬ÊýÖµÔ½´óµç»ú×ªËÙÔ½Âý·´Ö®Ôò¿ì
+  13          sbit P2_0=P2^0;//Õý×ª°´¼ü
+  14          sbit P2_1=P2^1;//·´×ª°´¼ü
+  15          sbit P2_2=P2^2;//¼ÓËÙ°´¼ü
+  16          sbit P2_3=P2^3;//¼õËÙ°´¼ü       
+  17          sbit P1_7=P1^7;
+  18          
+  19          
+  20          main()
+  21          { P1_7=0;
+  22   1      a=0;
+  23   1      b=0;
+  24   1      while(1)
+  25   1        {
+  26   2      
+  27   2               if(P2_0==0)
+  28   2            {
+  29   3                while(!P2_0); 
+  30   3                        b=1;
+  31   3                        P0=seg7code[1];
+  32   3            }
+  33   2             if(P2_1==0)
+  34   2            {
+  35   3                while(!P2_1);
+  36   3                b=2;
+  37   3                P0=seg7code[2];
+  38   3             }
+  39   2               anjian();  
+  40   2                switch(b)
+  41   2              {
+  42   3              case 0: break;
+  43   3              case 1: frun();break;
+  44   3              case 2: zrun(); break;
+  45   3              default:break;  
+  46   3              } 
+  47   2              switch(y)
+  48   2              {
+  49   3              case 7:speed=100;break;
+  50   3              case 9:speed=99;break;
+  51   3              case 11:speed=98;break;
+  52   3              case 13:speed=97;break;
+  53   3              case 15:speed=96;break;
+  54   3              case 17:speed=95;break;
+C51 COMPILER V8.05a   LED                                                                  10/18/2008 01:33:35 PAGE 2   
+
+  55   3              case 19:speed=94;break;
+  56   3              case 21:speed=93;break;
+  57   3              case 23:speed=92;break;
+  58   3              case 25:speed=91;break;
+  59   3              case 27:speed=90;break;
+  60   3              case 29:speed=89;break;
+  61   3              case 31:speed=88;break;
+  62   3              case 33:speed=87;break;
+  63   3              case 35:speed=86;break;
+  64   3              case 37:speed=85;break;
+  65   3              case 39:speed=84;break;
+  66   3              case 41:speed=83;break;
+  67   3              case 43:speed=82;break;
+  68   3              case 45:speed=81;break;
+  69   3              case 47:speed=80;break;
+  70   3              case 49:speed=79;break;
+  71   3              case 51:speed=78;break;
+  72   3              case 53:speed=77;break;
+  73   3              case 55:speed=76;break;
+  74   3              case 57:speed=75;break;
+  75   3              case 59:speed=74;break;
+  76   3              case 61:speed=73;break;
+  77   3              case 63:speed=72;break;
+  78   3              case 65:speed=71;break;
+  79   3              case 67:speed=70;break;
+  80   3              case 69:speed=69;break;
+  81   3              case 71:speed=68;break;
+  82   3          case 73:speed=67;break;
+  83   3              case 75:speed=66;break;
+  84   3              case 77:speed=65;break;
+  85   3              case 79:speed=64;break;
+  86   3              case 81:speed=63;break;
+  87   3              case 83:speed=62;break;
+  88   3              case 85:speed=61;break;
+  89   3              case 87:speed=60;break;
+  90   3              case 89:speed=59;break;
+  91   3              case 91:speed=58;break;
+  92   3              case 93:speed=57;break;
+  93   3              case 95:speed=56;break;
+  94   3              case 97:speed=55;break;
+  95   3              case 99:speed=54;break;
+  96   3              case 101:speed=53;break;
+  97   3              case 103:speed=52;break;
+  98   3              case 105:speed=51;break;
+  99   3              case 107:speed=50;break;
+ 100   3              case 109:speed=49;break;
+ 101   3              case 111:speed=48;break;
+ 102   3              case 113:speed=47;break;
+ 103   3              case 115:speed=46;break;
+ 104   3              case 117:speed=45;break;
+ 105   3              case 119:speed=44;break;
+ 106   3              case 121:speed=43;break;
+ 107   3              case 123:speed=42;break;
+ 108   3              case 125:speed=41;break;
+ 109   3              case 127:speed=40;break;
+ 110   3              case 129:speed=39;break;
+ 111   3              case 131:speed=38;break;
+ 112   3              case 133:speed=37;break;
+ 113   3              case 135:speed=36;break;
+ 114   3              case 137:speed=35;break;
+ 115   3              case 139:speed=34;break;
+ 116   3              case 141:speed=33;break;
+C51 COMPILER V8.05a   LED                                                                  10/18/2008 01:33:35 PAGE 3   
+
+ 117   3              case 143:speed=32;break;
+ 118   3              case 145:speed=31;break;
+ 119   3              case 147:speed=30;break;
+ 120   3              case 149:speed=29;break;
+ 121   3              case 151:speed=28;break;
+ 122   3              case 153:speed=27;break;
+ 123   3              case 155:speed=26;break;
+ 124   3              case 157:speed=25;break;
+ 125   3      
+ 126   3              default:break;
+ 127   3              }
+ 128   2        }
+ 129   1       
+ 130   1         }
+ 131          
+ 132          void delay(i)//ÑÓÊ±º¯Êý
+ 133            {
+ 134   1            for(j=0;j<i;j++)
+ 135   1                for(k=0;k<30;k++);   
+ 136   1               display();  
+*** WARNING C206 IN LINE 136 OF LED.C: 'display': missing function-prototype
+ 137   1        }
+ 138          
+ 139            void delay2(m)//ÑÓÊ±º¯Êý
+ 140            {
+ 141   1            for(j=0;j<m;j++);
+ 142   1                for(k=0;k<255;k++);   
+ 143   1                        
+ 144   1        }
+ 145          void frun()// ·´×ªÔËÐÐ
+ 146           {
+ 147   1           for(z=0;z<8;z++)
+ 148   1              {
+ 149   2                  P1=runf[z];
+ 150   2                  delay(y);
+ 151   2               }
+ 152   1      }
+ 153          void zrun()// Õý×ªÔËÐÐ
+ 154          {
+ 155   1      
+ 156   1         for(z=0;z<8;z++)
+ 157   1             { 
+ 158   2               P1=runz[z];
+ 159   2               delay(y);
+ 160   2             }
+ 161   1      }
+ 162          void anjian()
+ 163          {        P1_7=0;
+ 164   1            if(P2_2==0)
+ 165   1            {
+ 166   2                
+ 167   2                if(!P2_2);
+ 168   2                delay2(255);
+ 169   2                delay2(255);
+ 170   2                delay2(255);
+ 171   2                delay2(255);
+ 172   2                y--;
+ 173   2                if(y<=7)y=7;
+ 174   2                 P0=seg7code[3];
+ 175   2                 }
+ 176   1            if(P2_3==0)
+ 177   1            {
+C51 COMPILER V8.05a   LED                                                                  10/18/2008 01:33:35 PAGE 4   
+
+ 178   2                
+ 179   2                if(!P2_3);
+ 180   2                delay2(255);
+ 181   2                delay2(255);
+ 182   2                delay2(255);
+ 183   2                delay2(255);
+ 184   2                P0=seg7code[4];
+ 185   2                if((y<46)&&(y>7))y=+2;
+ 186   2                if((y<157)&&(y>47))y++;
+ 187   2                if(y>=157)y=157;
+ 188   2             }
+ 189   1        }
+ 190                    
+ 191           display()
+ 192          {
+ 193   1      bw=speed/100;
+ 194   1      sw=speed%100/10;
+ 195   1      gw=speed%10;
+ 196   1      
+ 197   1      
+ 198   1      P2=P2&0x7f; //P2.7 Êä³öµÍµçÆ½£¬Ñ¡Í¨Ç§Î»Êý
+ 199   1      P3=seg7code[0]; //È¡³öÇ§Î»Êý£¬²é±í£¬Êä³ö¡£
+ 200   1      delay2(8); //ÑÓÊ±
+ 201   1      P2=P2|0xf0; //ÏúÒþ
+ 202   1      P2=P2&0xbf; //P2.6 Êä³öµÍµçÆ½£¬Ñ¡Í¨°ÙÎ»Êý
+ 203   1      P3=seg7code[bw]; //È¡³ö°ÙÎ»Êý£¬²é±í£¬Êä³ö¡£
+ 204   1      delay2(8); //ÑÓÊ±
+ 205   1      P2=P2|0xf0; //ÏúÒþ
+ 206   1      P2=P2&0xdf; //P2.5 Êä³öµÍµçÆ½£¬Ñ¡Í¨Ê®Î»Êý
+ 207   1      P3=seg7code[sw]; //È¡³öÊ®Î»Êý£¬²é±í£¬Êä³ö¡£
+ 208   1      delay2(8); //ÑÓÊ±
+ 209   1      P2=P2|0xf0; //ÏúÒþ
+ 210   1      P2=P2&0xef;
+ 211   1      P3=seg7code[gw]; //È¡³ö¸öÎ»Êý£¬²é±í£¬Êä³ö¡£
+ 212   1      delay2(8);
+ 213   1      P2=P2|0xf0;
+ 214   1      
+ 215   1      
+ 216   1      
+ 217   1      }
+ 218          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1119    ----
+   CONSTANT SIZE    =     26    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     14    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

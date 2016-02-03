@@ -1,0 +1,338 @@
+<html>
+<body>
+<pre>
+<h1>礦ision3 Build Log</h1>
+<h2>Project:</h2>
+D:\毕业设计\串行通信的电子密码锁\密码锁\接收部分\keil接\chengxu.uv2
+Project File Date:  03/26/2009
+
+<h2>Output:</h2>
+Build target 'Target 1'
+linking...
+Program Size: data=58.1 xdata=0 code=921
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: data=58.1 xdata=0 code=921
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+CHENGXU.C(185): error C202: 'fmq': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling chengxu.c...
+CHENGXU.C(185): error C202: 'fmq': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+Program Size: data=58.1 xdata=0 code=921
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: data=58.1 xdata=0 code=921
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+Program Size: data=58.1 xdata=0 code=921
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: data=58.1 xdata=0 code=921
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+CHENGXU.C(230): warning C206: 'disp': missing function-prototype
+linking...
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  DISP
+    MODULE:  chengxu.obj (CHENGXU)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  DISP
+    MODULE:  chengxu.obj (CHENGXU)
+    ADDRESS: 01AEH
+Program Size: data=57.1 xdata=0 code=768
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 3 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+Program Size: data=58.1 xdata=0 code=921
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=52.1 xdata=0 code=813
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=52.1 xdata=0 code=813
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=52.1 xdata=0 code=813
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=52.1 xdata=0 code=813
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+CHENGXU.C(108): error C202: 'shuju': undefined identifier
+CHENGXU.C(109): error C202: 'chuli': undefined identifier
+CHENGXU.C(110): error C202: 'chuli': undefined identifier
+CHENGXU.C(114): error C202: 'chuli': undefined identifier
+CHENGXU.C(118): error C202: 'chuli': undefined identifier
+CHENGXU.C(122): error C202: 'chuli': undefined identifier
+CHENGXU.C(126): error C202: 'chuli': undefined identifier
+CHENGXU.C(130): error C202: 'chuli': undefined identifier
+CHENGXU.C(134): error C202: 'chuli': undefined identifier
+CHENGXU.C(138): error C202: 'chuli': undefined identifier
+CHENGXU.C(142): error C202: 'chuli': undefined identifier
+CHENGXU.C(146): error C202: 'chuli': undefined identifier
+CHENGXU.C(150): error C202: 'chuli': undefined identifier
+CHENGXU.C(152): error C202: 'cesi': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling chengxu.c...
+CHENGXU.C(153): error C202: 'cesi': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling chengxu.c...
+CHENGXU.C(153): error C202: 'cesi': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?DISP?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=966
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 3 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?DISP?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=966
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 3 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=969
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=969
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=974
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=974
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=984
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=984
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=984
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=984
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=984
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=55.1 xdata=0 code=898
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+CHENGXU.C(206): error C202: 'QX': undefined identifier
+CHENGXU.C(249): error C202: 'QX': undefined identifier
+CHENGXU.C(258): error C202: 'QX': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=56.1 xdata=0 code=969
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=56.1 xdata=0 code=969
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=56.1 xdata=0 code=969
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=56.1 xdata=0 code=969
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling chengxu.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=56.1 xdata=0 code=1042
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=56.1 xdata=0 code=1042
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=56.1 xdata=0 code=1042
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=56.1 xdata=0 code=1042
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY1?CHENGXU
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHUSHIZ?CHENGXU
+Program Size: data=56.1 xdata=0 code=1042
+creating hex file from "chengxu1"...
+"chengxu1" - 0 Error(s), 2 Warning(s).

@@ -1,0 +1,172 @@
+C51 COMPILER V8.05a   TEXT12                                                               12/31/2008 14:41:16 PAGE 1   
+
+
+C51 COMPILER V8.05a, COMPILATION OF MODULE TEXT12
+OBJECT MODULE PLACED IN Text12.OBJ
+COMPILER INVOKED BY: C:\Program Files\keil\C51\BIN\C51.EXE Text12.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1           #include<reg52.h>
+   2          unsigned char code dispbitcode[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+   3          unsigned char dispbuf[4];
+   4          unsigned int i;
+   5          unsigned int j;
+   6          unsigned int getdata;
+   7          unsigned int temp;
+   8          unsigned int temp1;
+   9          unsigned char count;
+  10          unsigned char d;
+  11          sbit ST=P2^4;
+  12          sbit OE=P2^5;
+  13          sbit EOC=P2^6;
+  14          sbit CLK=P2^7;
+  15          sbit ADD_A=P3^4;  //选择AD的输入端
+  16          sbit ADD_B=P3^5;
+  17          sbit ADD_C=P3^6;
+  18          sbit D0=P2^0;  //数码管的位控制端
+  19          sbit D1=P2^1;
+  20          sbit D2=P2^2;
+  21          sbit D3=P2^3;
+  22          sbit P17=P1^7;  //确定小数点的位置
+  23          sbit s1=P3^2;
+  24          sbit s2=P3^3;
+  25          #define  _v0_5 {s1=1;s2=0;}
+  26          #define _v10 {s1=0;s2=1;}
+  27           
+  28          
+  29          unsigned char m;
+  30          
+  31          void TimeInitial();
+  32          void Delay(unsigned int i);
+  33          
+  34          void TimeInitial()
+  35          { TMOD=0x10;
+  36   1       TH1=(65536-200)/256;
+  37   1       TL1=(65536-200)%256;
+  38   1       EA=1;
+  39   1       ET1=1;
+  40   1       TR1=1;
+  41   1       }
+  42          void Delay(unsigned int i)
+  43          {
+  44   1        unsigned int j;
+  45   1        for(;i>0;i--)
+  46   1        {
+  47   2        for(j=0;j<125;j++)
+  48   2        {;}
+  49   2        }
+  50   1      }
+  51           
+  52          void Display()
+  53          
+  54          { 
+  55   1      P1=dispbitcode[dispbuf[3]];
+C51 COMPILER V8.05a   TEXT12                                                               12/31/2008 14:41:16 PAGE 2   
+
+  56   1      
+  57   1       D0=0;  
+  58   1       D1=1;
+  59   1       D2=1;
+  60   1       D3=1;
+  61   1       Delay(10);
+  62   1       P1=0x00;
+  63   1      
+  64   1       P1=dispbitcode[dispbuf[2]];
+  65   1       if(m==2)
+  66   1       {
+  67   2       P17=1;
+  68   2       }
+  69   1       D0=1;
+  70   1       D1=0;
+  71   1       D2=1;
+  72   1       D3=1;
+  73   1       Delay(10); 
+  74   1       P1=0x00;
+  75   1       P1=dispbitcode[dispbuf[1]];
+  76   1        if(m==10)
+  77   1       {
+  78   2              P17=1;
+  79   2        }
+  80   1       D0=1;
+  81   1       D1=1;
+  82   1       D2=0;
+  83   1       D3=1;
+  84   1       Delay(10);
+  85   1       P1=0x00;
+  86   1       P1=dispbitcode[dispbuf[0]]; 
+  87   1       D0=1;
+  88   1       D1=1;
+  89   1       D2=1;
+  90   1       D3=0;
+  91   1       Delay(10);
+  92   1       P1=0x00;
+  93   1      }
+  94          void main()
+  95          {
+  96   1      TimeInitial();
+  97   1      ADD_A=0;
+  98   1      ADD_B=0;
+  99   1      ADD_C=0;
+ 100   1      _v10;
+ 101   1      m=2;
+ 102   1      while(1)
+ 103   1      {                        
+ 104   2      
+ 105   2      
+ 106   2              ST=0;
+ 107   2              OE=0;
+ 108   2              ST=1;
+ 109   2              ST=0;
+ 110   2              while(EOC==0);
+ 111   2              OE=1;
+ 112   2              getdata=P0;
+ 113   2              OE=0;
+ 114   2                       if ((s1==0) && (s2==1) && (getdata<6))
+ 115   2              {       
+ 116   3                      ADD_A=1;
+ 117   3                      _v0_5;
+C51 COMPILER V8.05a   TEXT12                                                               12/31/2008 14:41:16 PAGE 3   
+
+ 118   3      
+ 119   3                      m=10;   
+ 120   3              }
+ 121   2              else if ((s1==1)&&(s2==0) && (getdata>254))
+ 122   2              {
+ 123   3                      ADD_A=0;
+ 124   3                      _v10;
+ 125   3              
+ 126   3                      m=2;
+ 127   3              }
+ 128   2      
+ 129   2      
+ 130   2              temp=(getdata*1.0/255)*500*m;
+ 131   2              dispbuf[0]=temp%10;
+ 132   2              dispbuf[1]=temp/10%10;
+ 133   2              dispbuf[2]=temp/100%10;
+ 134   2              dispbuf[3]=temp/1000;
+ 135   2              Display();
+ 136   2      
+ 137   2      }
+ 138   1      }
+ 139          
+ 140          void t1(void) interrupt 3 using 0
+ 141           {
+ 142   1        TH1=(65536-200)/256;
+ 143   1        TL1=(65536-200)%256;
+ 144   1        CLK=~CLK;
+ 145   1        }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    374    ----
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     17    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

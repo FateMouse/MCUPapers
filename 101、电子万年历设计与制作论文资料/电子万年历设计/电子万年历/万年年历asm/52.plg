@@ -1,0 +1,43 @@
+<html>
+<body>
+<pre>
+<h1>µVision2 Build Log</h1>
+<h2>Project:</h2>
+C:\Documents and Settings\Administrator\×ÀÃæ\52\52.uv2
+Project File Date:  03/30/2008
+
+<h2>Output:</h2>
+Build target 'Target 1'
+assembling STARTUP.A51...
+assembling 52.ASM...
+linking...
+*** WARNING L5: CODE SPACE MEMORY OVERLAP
+    FROM:    0000H
+    TO:      0002H
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?C_START
+    MODULE:  STARTUP.obj (?C_STARTUP)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?C_START
+    MODULE:  STARTUP.obj (?C_STARTUP)
+    ADDRESS: 1063H
+Program Size: data=9.0 xdata=0 code=4200
+creating hex file from "52"...
+"52" - 0 Error(s), 3 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+assembling 52.ASM...
+linking...
+*** WARNING L5: CODE SPACE MEMORY OVERLAP
+    FROM:    0000H
+    TO:      0002H
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  ?C_START
+    MODULE:  STARTUP.obj (?C_STARTUP)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  ?C_START
+    MODULE:  STARTUP.obj (?C_STARTUP)
+    ADDRESS: 1061H
+Program Size: data=9.0 xdata=0 code=4198
+creating hex file from "52"...
+"52" - 0 Error(s), 3 Warning(s).

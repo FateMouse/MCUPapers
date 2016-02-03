@@ -1,0 +1,233 @@
+C51 COMPILER V8.01   HWKZ                                                                  07/16/2008 10:24:37 PAGE 1   
+
+
+C51 COMPILER V8.01, COMPILATION OF MODULE HWKZ
+OBJECT MODULE PLACED IN hwkz.OBJ
+COMPILER INVOKED BY: D:\安装程序\keil_801\C51\BIN\C51.EXE hwkz.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1           #include <reg51.h>
+   2          #define uchar unsigned char
+   3          sbit P00=P0^0;
+   4          //sbit P11=P1^1;
+   5          //sbit P12=P1^2;
+   6          sbit P01=P0^1;
+   7          sbit  in=P3^2;
+   8          uchar IRCOM[8];
+   9          uchar high,hug;   //高电平个数
+  10          uchar pwm;        //电平周期
+  11          uchar cnt,cat;
+  12          void key1cnt()
+  13          {
+  14   1              while(IRCOM[5]==0x06)IRCOM[5]=0x00;
+  15   1              P1= IRCOM[5];
+  16   1              TR0=1;
+  17   1              TR1=1;
+  18   1              if(high!=pwm)
+  19   1              {
+  20   2                      high++;
+  21   2                      if(high==pwm)
+  22   2                      {
+  23   3                              TR0=0;
+  24   3                              P00=1;  
+  25   3                      }
+  26   2                      else
+  27   2                      {
+  28   3                              if(high==0x09)
+  29   3                              {
+  30   4                                      TR0=1;  
+  31   4                              }
+  32   3                      }
+  33   2              }
+  34   1      }
+  35          void key2cnt()
+  36          {
+  37   1              uchar temp;
+  38   1              while(IRCOM[5]==0x44)IRCOM[5]=0x00;
+  39   1              P1= IRCOM[5];
+  40   1              TR0=1;
+  41   1              TR1=1;
+  42   1              if(high!=0x01)
+  43   1              {
+  44   2                      high--;
+  45   2                      temp=pwm;
+  46   2                      temp--;
+  47   2                      if(high==0x01)
+  48   2                      {
+  49   3                              TR0=0;
+  50   3                              P00=0;  
+  51   3                      }
+  52   2                      else
+  53   2                      {
+  54   3                              if(high==temp)
+  55   3                              {
+C51 COMPILER V8.01   HWKZ                                                                  07/16/2008 10:24:37 PAGE 2   
+
+  56   4                                      TR0=1;  
+  57   4                              }
+  58   3                      }
+  59   2              }
+  60   1      }
+  61          void key3cnt()
+  62          {
+  63   1              P00=0;
+  64   1              P01=0;
+  65   1              TR0=0;
+  66   1              TR1=0;
+  67   1      }
+  68          void delay(unsigned char x)      //x*0.14MS
+  69          {
+  70   1       unsigned char i ;
+  71   1        while(x--)
+  72   1       {
+  73   2        for (i =0;i<13;i++);
+  74   2       }
+  75   1      }
+  76          
+  77          void main()
+  78          {
+  79   1              high=0x15;
+  80   1              hug=0x15;
+  81   1              pwm=0x30;
+  82   1              cnt=0x01;
+  83   1              cat=0x01;
+  84   1      //      cn=0x09;        
+  85   1              TMOD=0x22;
+  86   1              ET0=1;
+  87   1              ET1=1;
+  88   1              EA=1;
+  89   1              EX0=1;
+  90   1              TH0=(65535-20000)/256;
+  91   1              TL0=(65535-20000)%256;
+  92   1              TH1=(65535-20000)/256;
+  93   1              TL1=(65535-20000)%256;
+  94   1      //      TR0=1;
+  95   1      //      TR1=1;
+  96   1              IT0=1;
+  97   1              in=1 ;
+  98   1              P00=0;
+  99   1              P01=0;
+ 100   1              while(1)
+ 101   1              {
+ 102   2                  //P1= IRCOM[5];
+ 103   2                                 /**  0000 0110(0x06) (上) 
+ 104   2      
+ 105   2      0100 0111(0x47)（左）   0000 0111 (0x07)（中）       0100 0000(0x40)（右）
+ 106   2                              
+ 107   2                                                      0100 0100(0x44) （下）**/
+ 108   2                      switch(IRCOM[5])
+ 109   2                      {
+ 110   3                              case 0x06:key1cnt();break;//前进
+ 111   3                              case 0x44:key2cnt();break;//后退
+ 112   3                              case 0x07:key3cnt();break;//停止 
+ 113   3                      }
+ 114   2                      /*if(P11==0)
+ 115   2                      key1cnt();
+ 116   2                      if(P12==0)
+ 117   2                      key2cnt();*/
+C51 COMPILER V8.01   HWKZ                                                                  07/16/2008 10:24:37 PAGE 3   
+
+ 118   2              } 
+ 119   1      }
+ 120          void int0() interrupt 1
+ 121          {
+ 122   1              IP=0x09;
+ 123   1              TH0=(65535-2000)/256;
+ 124   1              TL0=(65535-2000)%256;
+ 125   1              cnt++;
+ 126   1              if((cnt!=high)&&(cnt==pwm))
+ 127   1              {
+ 128   2                      cnt=0x01;
+ 129   2                      P00=1;
+ 130   2              }
+ 131   1              else if(cnt==high)
+ 132   1              {
+ 133   2                      P00=0;  
+ 134   2              }
+ 135   1                      
+ 136   1      } 
+ 137          void int1() interrupt 3
+ 138          {
+ 139   1              IP=0x03;
+ 140   1              TH1=(65535-2000)/256;
+ 141   1              TL1=(65535-2000)%256;
+ 142   1              cat++;
+ 143   1              if((cat!=hug)&&(cat==pwm))
+ 144   1              {
+ 145   2                      cat=0x01;
+ 146   2                      P01=1;
+ 147   2              }
+ 148   1              else if(cat==hug)
+ 149   1              {
+ 150   2                      P01=0;
+ 151   2              }
+ 152   1                      
+ 153   1      }
+ 154          
+ 155          
+ 156          
+ 157          /****红外线解码程序（开发板电路）********/
+ 158          /****键值送给P1口，只能识别16个键****/
+ 159          /****红外发射是采用38K的载频发射的，可知信号周期为1/38ms=0.263ms,即高低电平为0.1325ms****/
+ 160          
+ 161          it0() interrupt 0
+ 162          {
+ 163   1       unsigned char i,j,k,N=0;
+ 164   1       IP=0x0A;
+ 165   1        EA = 0 ;
+ 166   1      I1:
+ 167   1        for (i=0;i<10;i++)
+ 168   1         {
+ 169   2          if (in==0) break;
+ 170   2       if (i==9) {EA =1 ;return ;}
+ 171   2         }
+ 172   1        delay(20);
+ 173   1          if (in==1) goto I1;  //确认IR信号出现
+ 174   1        while (!in)            //等 IR 变为高电平
+ 175   1          {delay(1) ;}
+ 176   1      
+ 177   1       for (j=0 ;j<4 ;j++)
+ 178   1       { 
+ 179   2        for (k=0 ;k<8 ;k++)
+C51 COMPILER V8.01   HWKZ                                                                  07/16/2008 10:24:37 PAGE 4   
+
+ 180   2        {
+ 181   3         while (in)            //等 IR 变为低电平
+ 182   3           {delay(1);}
+ 183   3          while (!in)          //等 IR 变为高电平
+ 184   3           {delay(1);}
+ 185   3           while (in)           //计算IR高电平时长
+ 186   3            {
+ 187   4          delay(1);
+ 188   4          N++ ;           
+ 189   4          if (N>=30) {EA=1 ;return ;}
+ 190   4         }
+ 191   3           IRCOM[j]=IRCOM[j]>>1;
+ 192   3           if (N>=8) {IRCOM[j] = IRCOM[j] | 0x80 ;}
+ 193   3           N=0;
+ 194   3        }
+ 195   2       }
+ 196   1         
+ 197   1         if (IRCOM[2]!=~IRCOM[3]) {EA=1 ;return ;}
+ 198   1         IRCOM[5]=IRCOM[2];
+ 199   1         P1= IRCOM[5];
+ 200   1         delay(100);
+ 201   1         EA = 1 ;
+ 202   1      }
+ 203          
+ 204          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    471    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     13       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

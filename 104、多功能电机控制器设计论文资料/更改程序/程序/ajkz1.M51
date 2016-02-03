@@ -1,0 +1,240 @@
+BL51 BANKED LINKER/LOCATER V6.00                                                        04/14/2009  23:12:03  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.00, INVOKED BY:
+D:\PROGRAM FILES\C51\BIN\BL51.EXE STARTUP.obj, ajkz.obj TO ajkz1 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  STARTUP.obj (?C_STARTUP)
+  ajkz.obj (AJKZ)
+  D:\PROGRAM FILES\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  ajkz1 (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0009H     UNIT         ?DT?AJKZ
+            IDATA   0011H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     00CBH     UNIT         ?PR?MAIN?AJKZ
+            CODE    00CEH     008CH     UNIT         ?C_C51STARTUP
+            CODE    015AH     0036H     UNIT         ?PR?ANJIAN?AJKZ
+            CODE    0190H     0028H     UNIT         ?PR?_DELAY?AJKZ
+            CODE    01B8H     0013H     UNIT         ?PR?FRUN?AJKZ
+            CODE    01CBH     0013H     UNIT         ?PR?ZRUN?AJKZ
+            CODE    01DEH     0010H     UNIT         ?CO?AJKZ
+            CODE    01EEH     0005H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   ajkz1 (?C_STARTUP)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?AJKZ
+  +--> ?C_INITSEG
+
+?PR?MAIN?AJKZ
+  +--> ?PR?ANJIAN?AJKZ
+  +--> ?PR?FRUN?AJKZ
+  +--> ?PR?ZRUN?AJKZ
+
+?PR?ANJIAN?AJKZ
+  +--> ?PR?_DELAY?AJKZ
+
+?PR?FRUN?AJKZ
+  +--> ?CO?AJKZ
+  +--> ?PR?_DELAY?AJKZ
+BL51 BANKED LINKER/LOCATER V6.00                                                      04/14/2009  23:12:03  PAGE 2
+
+
+
+?PR?ZRUN?AJKZ
+  +--> ?CO?AJKZ
+  +--> ?PR?_DELAY?AJKZ
+
+
+
+SYMBOL TABLE OF MODULE:  ajkz1 (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:00CEH         SEGMENT       ?C_C51STARTUP
+  I:0011H         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:00D1H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:00CEH         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:00CEH         LINE#         133
+  C:00D0H         LINE#         134
+  C:00D1H         LINE#         135
+  C:00D2H         LINE#         136
+  C:00D4H         LINE#         185
+  C:00D7H         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        AJKZ
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IE
+  C:0199H         PUBLIC        _delay
+  B:00A0H.0       PUBLIC        P2_0
+  B:00A0H.1       PUBLIC        P2_1
+  B:00A0H.2       PUBLIC        P2_2
+  B:00A0H.3       PUBLIC        P2_3
+BL51 BANKED LINKER/LOCATER V6.00                                                      04/14/2009  23:12:03  PAGE 3
+
+
+  B:00A0H.4       PUBLIC        P2_4
+  D:00B8H         PUBLIC        IP
+  C:0003H         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:01B8H         PUBLIC        frun
+  C:01E6H         PUBLIC        runf
+  C:01CBH         PUBLIC        zrun
+  C:01DEH         PUBLIC        runz
+  D:0008H         PUBLIC        a
+  D:0009H         PUBLIC        b
+  D:00C8H         PUBLIC        T2CON
+  D:000AH         PUBLIC        i
+  D:000BH         PUBLIC        j
+  D:000CH         PUBLIC        k
+  D:000DH         PUBLIC        s
+  C:015AH         PUBLIC        anjian
+  D:000EH         PUBLIC        y
+  D:0010H         PUBLIC        z
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          L?0054
+  -------         ENDPROC       L?0054
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        i
+  C:0199H         LINE#         31
+  C:0199H         LINE#         32
+  C:0199H         LINE#         33
+  C:01A9H         LINE#         34
+  C:01B7H         LINE#         35
+  -------         ENDPROC       _DELAY
+  -------         PROC          FRUN
+  C:01B8H         LINE#         38
+  C:01B8H         LINE#         39
+  C:01B8H         LINE#         40
+  C:01BBH         LINE#         41
+  C:01BBH         LINE#         42
+  C:01BEH         LINE#         43
+  C:01C1H         LINE#         44
+  C:01CAH         LINE#         45
+  -------         ENDPROC       FRUN
+  -------         PROC          ZRUN
+  C:01CBH         LINE#         46
+  C:01CBH         LINE#         47
+  C:01CBH         LINE#         49
+  C:01CEH         LINE#         50
+  C:01CEH         LINE#         51
+  C:01D1H         LINE#         52
+  C:01D4H         LINE#         53
+  C:01DDH         LINE#         54
+  -------         ENDPROC       ZRUN
+  -------         PROC          ANJIAN
+  C:015AH         LINE#         55
+  C:015AH         LINE#         56
+  C:015DH         LINE#         57
+  C:015DH         LINE#         58
+  C:0160H         LINE#         59
+  C:0160H         LINE#         60
+BL51 BANKED LINKER/LOCATER V6.00                                                      04/14/2009  23:12:03  PAGE 4
+
+
+  C:0167H         LINE#         61
+  C:016AH         LINE#         62
+  C:016CH         LINE#         63
+  C:0176H         LINE#         64
+  C:0176H         LINE#         66
+  C:0176H         LINE#         67
+  C:0179H         LINE#         68
+  C:0179H         LINE#         69
+  C:0180H         LINE#         70
+  C:0183H         LINE#         71
+  C:0185H         LINE#         72
+  C:018FH         LINE#         73
+  C:018FH         LINE#         74
+  -------         ENDPROC       ANJIAN
+  -------         PROC          MAIN
+  C:0003H         LINE#         82
+  C:0003H         LINE#         83
+  C:0003H         LINE#         84
+  C:0006H         LINE#         85
+  C:0008H         LINE#         93
+  C:0008H         LINE#         94
+  C:0008H         LINE#         95
+  C:000BH         LINE#         96
+  C:000BH         LINE#         97
+  C:000EH         LINE#         98
+  C:0011H         LINE#         99
+  C:0011H         LINE#         100
+  C:0014H         LINE#         101
+  C:0014H         LINE#         102
+  C:0017H         LINE#         103
+  C:001AH         LINE#         104
+  C:001AH         LINE#         105
+  C:001DH         LINE#         106
+  C:0026H         LINE#         107
+  C:0026H         LINE#         108
+  C:0026H         LINE#         109
+  C:002BH         LINE#         110
+  C:002EH         LINE#         111
+  C:002EH         LINE#         112
+  C:002EH         LINE#         113
+  C:005AH         LINE#         114
+  C:005AH         LINE#         115
+  C:0065H         LINE#         116
+  C:0070H         LINE#         117
+  C:007BH         LINE#         118
+  C:0086H         LINE#         119
+  C:0092H         LINE#         120
+  C:009EH         LINE#         121
+  C:00AAH         LINE#         122
+  C:00B6H         LINE#         123
+  C:00C2H         LINE#         124
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        AJKZ
+
+Program Size: data=18.0 xdata=0 code=499
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
